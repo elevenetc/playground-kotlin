@@ -1,7 +1,5 @@
 package test
 
-import main.Node
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 /**
@@ -9,7 +7,7 @@ import org.junit.jupiter.api.Test
  */
 
 class Tests {
-    @Test fun testZ() {
-        val node = Node(1)
+    @Test fun test() {
+
     }
 }
