@@ -1,10 +1,15 @@
 package reactive.networks
 
+import org.slf4j.LoggerFactory
+import utils.Connection
 import java.net.ServerSocket
 
+class SocketServer(
+        val port: Int,
+        val connection: Connection
+) {
 
-class SocketServer(val port: Int) {
-
+    val logger = LoggerFactory.getLogger(SocketServer::class.java)!!
     val connectionState: ConnectionState = ConnectionState()
 
     fun start() {
@@ -12,15 +17,22 @@ class SocketServer(val port: Int) {
         val serverSocket = ServerSocket(port)
 
         Thread({
+
+            var num: Int = 0
+
             while (connectionState.isRunning) {
-                println("waiting for a client")
+
+                logger.info("waiting for a client")
+
                 val clientSocket = serverSocket.accept()
-                println("client is connected")
-                OutThread(connectionState, clientSocket).start()
-                InThread(connectionState, clientSocket).start()
+                num++
+                logger.info("client($num) is connected")
+                OutThread(connectionState, clientSocket, connection).start()
+                InThread(connectionState, clientSocket, connection).start()
+
+                connection.onConnected()
             }
         }).start()
 
     }
-
 }
