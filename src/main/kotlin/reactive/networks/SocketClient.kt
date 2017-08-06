@@ -1,13 +1,11 @@
 package reactive.networks
 
 import org.slf4j.LoggerFactory
-import utils.Connection
+import utils.ConnectionHandler
 
 
 class SocketClient(
-        val host: String,
-        val port: Int,
-        val connection: Connection,
+        val connectionHandler: ConnectionHandler,
         val socketFactory: SocketFactory,
         val reconnectionRetryDelay: Long = 1000) {
 
@@ -20,24 +18,27 @@ class SocketClient(
         Thread({
 
             logger.info("created")
-            connection.isConnected = true
+            connectionHandler.isConnected = true
 
-            while (connection.isConnected) {
+            while (connectionHandler.isConnected) {
                 try {
 
                     val socket = socketFactory.clientSocket()
 
-                    inThread = InThread(socket, connection)
-                    outThread = OutThread(socket, connection)
+                    inThread = InThread(socket, connectionHandler)
+                    outThread = OutThread(socket, connectionHandler)
+
+                    inThread?.name = "in-client"
+                    outThread?.name = "out-client"
 
                     inThread?.start()
                     outThread?.start()
 
-                    connection.onReady()
+                    connectionHandler.onReady()
 
                     Thread.sleep(Long.MAX_VALUE)
                 } catch (e: Exception) {
-                    logger.info("connection error. reconnection in $reconnectionRetryDelay ms")
+                    logger.info("connectionHandler error. reconnection in $reconnectionRetryDelay ms")
                     inThread?.interrupt()
                     outThread?.interrupt()
                     Thread.sleep(reconnectionRetryDelay)

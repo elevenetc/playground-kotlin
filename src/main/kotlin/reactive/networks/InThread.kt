@@ -1,18 +1,23 @@
 package reactive.networks
 
-import utils.Connection
+import utils.ConnectionHandler
 
 class InThread(
         val socket: ISocket,
-        val connection: Connection
+        val connectionHandler: ConnectionHandler
 ) : Thread() {
+
+    init {
+        isDaemon = true
+    }
+
     override fun run() {
         try {
-            while (connection.isConnected) {
-                connection.onNewMessage(socket.readLine())
+            while (connectionHandler.isConnected) {
+                connectionHandler.onNewMessage(socket.readLine())
             }
         } catch (e: Exception) {
-            connection.onError(e)
+            connectionHandler.onError(e)
         }
 
     }

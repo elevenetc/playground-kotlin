@@ -1,24 +1,23 @@
 package reactive.networks
 
 import org.slf4j.LoggerFactory
-import utils.Connection
 
 class SocketServer(
-        val port: Int,
-        val connection: Connection,
+        val connectionFactory: ConnectionHandlerFactory,
         val socketFactory: SocketFactory
 ) {
 
     val logger = LoggerFactory.getLogger(SocketServer::class.java)!!
 
     @Volatile
-    var isRunning: Boolean = false
+    var isRunning: Boolean = true
 
     fun start() {
 
         val serverSocket = socketFactory.serverSocket()
 
-        Thread({
+        val thread = Thread({
+
 
             var num: Int = 0
 
@@ -30,14 +29,25 @@ class SocketServer(
 
                 val clientSocket = serverSocket.accept()
 
+                val connection = connectionFactory.create()
+                connection.isConnected = true
+
                 logger.info("client($num) is connected")
-                OutThread(clientSocket, connection).start()
-                InThread(clientSocket, connection).start()
+                val outThread = OutThread(clientSocket, connection)
+                val inThread = InThread(clientSocket, connection)
+
+                outThread.name = "out-server"
+                inThread.name = "in-server"
+
+                outThread.start()
+                inThread.start()
 
                 connection.onReady()
 
             }
-        }).start()
+        })
+        thread.isDaemon = true
+        thread.start()
 
     }
 }

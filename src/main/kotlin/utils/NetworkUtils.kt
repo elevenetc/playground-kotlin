@@ -3,7 +3,7 @@ package utils
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingDeque
 
-open class Connection {
+open class ConnectionHandler {
 
     @Volatile var isConnected: Boolean = false
     val messageQueue = LinkedBlockingDeque<String>()
