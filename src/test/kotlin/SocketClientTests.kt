@@ -6,7 +6,7 @@ import reactive.networks.SocketFactory
 import reactive.networks.SocketServer
 import utils.ConnectionHandler
 import utils.SingleConnectionHandlerFactory
-import utils.SingleSocketFactory
+import utils.BasicConnectionSocketFactory
 import utils.sleepFor
 
 class SocketClientTests {
@@ -15,14 +15,16 @@ class SocketClientTests {
         org.apache.log4j.BasicConfigurator.configure()
     }
 
-    @Test fun testConnection() {
+    @Test fun testPingPong() {
 
 
         val clientConnection = spy(ConnectionHandler())
         val serverConnection = spy(ConnectionHandler())
 
-        val socketFactory: SocketFactory = SingleSocketFactory()
         val serverSocketFactory = SingleConnectionHandlerFactory(serverConnection)
+
+        val socketFactory: SocketFactory = BasicConnectionSocketFactory()
+
 
         `when`(clientConnection.onReady()).then {
             clientConnection.sendMessage("ping")

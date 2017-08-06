@@ -7,7 +7,11 @@ import reactive.networks.SocketFactory
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingDeque
 
-class SingleSocketFactory : SocketFactory {
+/**
+ * SocketFactory which emulates client server interaction.
+ * All data which is sent by client(socket) is received by server(socket) and vice versa.
+ */
+class BasicConnectionSocketFactory : SocketFactory {
 
     val serverQueue: BlockingQueue<String> = LinkedBlockingDeque()
     val clientQueue: BlockingQueue<String> = LinkedBlockingDeque()
@@ -26,6 +30,9 @@ class SingleSocketFactory : SocketFactory {
         }
     }
 
+    /**
+     * Returns server socket which accepts only one client
+     */
     override fun serverSocket(): IServerSocket {
         return object : IServerSocket {
 
