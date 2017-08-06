@@ -16,6 +16,10 @@ class SocketServer(
 
         val serverSocket = socketFactory.serverSocket()
 
+        /**
+         * TODO: replace thread creation with ThreadFactory for testability
+         * or replace with RxThreads?
+         */
         val thread = Thread({
 
 

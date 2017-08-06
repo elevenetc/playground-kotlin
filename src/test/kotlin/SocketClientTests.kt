@@ -4,9 +4,9 @@ import org.mockito.Mockito.*
 import reactive.networks.SocketClient
 import reactive.networks.SocketFactory
 import reactive.networks.SocketServer
+import utils.BasicConnectionSocketFactory
 import utils.ConnectionHandler
 import utils.SingleConnectionHandlerFactory
-import utils.BasicConnectionSocketFactory
 import utils.sleepFor
 
 class SocketClientTests {
@@ -37,6 +37,7 @@ class SocketClientTests {
         SocketServer(serverSocketFactory, socketFactory).start()
         SocketClient(clientConnection, socketFactory).connect()
 
+        //TODO: remove when ThreadFactories are in place
         sleepFor(2000)
 
         `verify`(clientConnection).onNewMessage("pong")
@@ -44,5 +45,9 @@ class SocketClientTests {
 
         `verify`(clientConnection, never()).onError(Exception())
         `verify`(serverConnection, never()).onError(Exception())
+    }
+
+    @Test fun testErrorCases() {
+        //TODO: add error cases tests
     }
 }
