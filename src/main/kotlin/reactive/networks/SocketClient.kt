@@ -2,17 +2,16 @@ package reactive.networks
 
 import org.slf4j.LoggerFactory
 import utils.Connection
-import java.net.Socket
 
 
 class SocketClient(
         val host: String,
         val port: Int,
         val connection: Connection,
+        val socketFactory: SocketFactory,
         val reconnectionRetryDelay: Long = 1000) {
 
     val logger = LoggerFactory.getLogger(SocketClient::class.java)!!
-    val connectionState: ConnectionState = ConnectionState()
     var inThread: InThread? = null
     var outThread: OutThread? = null
 
@@ -21,22 +20,20 @@ class SocketClient(
         Thread({
 
             logger.info("created")
-            connectionState.isRunning = true
+            connection.isConnected = true
 
-            while (connectionState.isRunning) {
+            while (connection.isConnected) {
                 try {
 
-                    val socket = Socket(host, port)
+                    val socket = socketFactory.clientSocket()
 
-
-
-                    inThread = InThread(connectionState, socket, connection)
-                    outThread = OutThread(connectionState, socket, connection)
+                    inThread = InThread(socket, connection)
+                    outThread = OutThread(socket, connection)
 
                     inThread?.start()
                     outThread?.start()
 
-                    connection.onConnected()
+                    connection.onReady()
 
                     Thread.sleep(Long.MAX_VALUE)
                 } catch (e: Exception) {
@@ -49,9 +46,5 @@ class SocketClient(
 
 
         }).start()
-    }
-
-    fun log(msg: String) {
-        println("client: $msg")
     }
 }

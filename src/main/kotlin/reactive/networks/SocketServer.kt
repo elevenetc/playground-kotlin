@@ -2,35 +2,40 @@ package reactive.networks
 
 import org.slf4j.LoggerFactory
 import utils.Connection
-import java.net.ServerSocket
 
 class SocketServer(
         val port: Int,
-        val connection: Connection
+        val connection: Connection,
+        val socketFactory: SocketFactory
 ) {
 
     val logger = LoggerFactory.getLogger(SocketServer::class.java)!!
-    val connectionState: ConnectionState = ConnectionState()
+
+    @Volatile
+    var isRunning: Boolean = false
 
     fun start() {
-        connectionState.isRunning = true
-        val serverSocket = ServerSocket(port)
+
+        val serverSocket = socketFactory.serverSocket()
 
         Thread({
 
             var num: Int = 0
 
-            while (connectionState.isRunning) {
+            while (isRunning) {
+
+                num++
 
                 logger.info("waiting for a client")
 
                 val clientSocket = serverSocket.accept()
-                num++
-                logger.info("client($num) is connected")
-                OutThread(connectionState, clientSocket, connection).start()
-                InThread(connectionState, clientSocket, connection).start()
 
-                connection.onConnected()
+                logger.info("client($num) is connected")
+                OutThread(clientSocket, connection).start()
+                InThread(clientSocket, connection).start()
+
+                connection.onReady()
+
             }
         }).start()
 

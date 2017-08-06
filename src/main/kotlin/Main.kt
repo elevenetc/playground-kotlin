@@ -1,5 +1,6 @@
 package main
 
+import reactive.networks.JavaNetSocketFactory
 import reactive.networks.SocketClient
 import reactive.networks.SocketServer
 import utils.Connection
@@ -8,12 +9,16 @@ class Main
 
 fun main(args: Array<String>) {
     val port = 9999
+    val host = "localhost"
     org.apache.log4j.BasicConfigurator.configure()
 
-    SocketClient("localhost", port, ClientConnection()).connect()
+    val socketFactory = JavaNetSocketFactory(host, port)
+
+
+    SocketClient(host, port, ClientConnection(), socketFactory).connect()
 
     Thread.sleep(2000)
-    SocketServer(port, ServerConnection()).start()
+    SocketServer(port, ServerConnection(), socketFactory).start()
 
     Thread.sleep(Long.MAX_VALUE)
 }
@@ -21,8 +26,7 @@ fun main(args: Array<String>) {
 class ClientConnection : Connection() {
 
 
-
-    override fun onConnected() {
+    override fun onReady() {
         while (true) {
             sendMessage("ping")
             Thread.sleep(1000)

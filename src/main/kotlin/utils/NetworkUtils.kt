@@ -5,9 +5,10 @@ import java.util.concurrent.LinkedBlockingDeque
 
 open class Connection {
 
+    @Volatile var isConnected: Boolean = false
     val messageQueue = LinkedBlockingDeque<String>()
 
-    open fun onConnected() {
+    open fun onReady() {
 
     }
 
@@ -21,5 +22,10 @@ open class Connection {
 
     fun getSendMessageQueue(): BlockingQueue<String> {
         return messageQueue
+    }
+
+    @Synchronized
+    fun onError(e: Exception) {
+
     }
 }
