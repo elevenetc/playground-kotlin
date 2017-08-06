@@ -24,8 +24,7 @@ open class ConnectionHandler {
         return messageQueue
     }
 
-    @Synchronized
-    fun onError(e: Exception) {
+    open fun onError(e: Exception) {
 
     }
 }

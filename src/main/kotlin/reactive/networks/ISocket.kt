@@ -1,6 +1,6 @@
 package reactive.networks
 
 interface ISocket {
-    fun readLine(): String
-    fun println(str: String)
+    fun read(): String
+    fun write(data: String)
 }

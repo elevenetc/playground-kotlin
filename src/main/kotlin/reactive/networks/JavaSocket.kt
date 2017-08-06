@@ -10,11 +10,11 @@ class JavaSocket(val socket: Socket) : ISocket {
     val input: BufferedReader by lazy { BufferedReader(InputStreamReader(socket.getInputStream())) }
     val out: PrintWriter by lazy { PrintWriter(socket.getOutputStream(), true) }
 
-    override fun readLine(): String {
+    override fun read(): String {
         return input.readLine()
     }
 
-    override fun println(str: String) {
-        out.println(str)
+    override fun write(data: String) {
+        out.println(data)
     }
 }

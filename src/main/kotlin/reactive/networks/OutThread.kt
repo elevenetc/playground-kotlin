@@ -15,7 +15,7 @@ class OutThread(
             val queue = connectionHandler.getSendMessageQueue()
             while (connectionHandler.isConnected) {
                 val msg = queue.take()
-                socket.println(msg)
+                socket.write(msg)
             }
         } catch (e: Exception) {
             connectionHandler.onError(e)

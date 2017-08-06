@@ -14,7 +14,7 @@ class InThread(
     override fun run() {
         try {
             while (connectionHandler.isConnected) {
-                connectionHandler.onNewMessage(socket.readLine())
+                connectionHandler.onNewMessage(socket.read())
             }
         } catch (e: Exception) {
             connectionHandler.onError(e)
