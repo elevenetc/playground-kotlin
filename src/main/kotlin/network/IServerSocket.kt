@@ -1,4 +1,4 @@
-package reactive.networks
+package network
 
 interface IServerSocket {
     fun accept(): ISocket

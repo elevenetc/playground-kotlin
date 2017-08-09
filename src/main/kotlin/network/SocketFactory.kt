@@ -1,4 +1,4 @@
-package reactive.networks
+package network
 
 interface SocketFactory {
     fun clientSocket(): ISocket

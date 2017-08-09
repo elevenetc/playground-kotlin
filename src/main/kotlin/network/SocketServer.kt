@@ -1,10 +1,12 @@
-package reactive.networks
+package network
 
 import org.slf4j.LoggerFactory
+import threading.Scheduler
 
 class SocketServer(
         val connectionFactory: ConnectionHandlerFactory,
-        val socketFactory: SocketFactory
+        val socketFactory: SocketFactory,
+        val scheduler: Scheduler
 ) {
 
     val logger = LoggerFactory.getLogger(SocketServer::class.java)!!
@@ -16,13 +18,7 @@ class SocketServer(
 
         val serverSocket = socketFactory.serverSocket()
 
-        /**
-         * TODO: replace thread creation with ThreadFactory for testability
-         * or replace with RxThreads?
-         */
-        val thread = Thread({
-
-
+        scheduler.thread({
             var num: Int = 0
 
             while (isRunning) {
@@ -37,21 +33,13 @@ class SocketServer(
                 connection.isConnected = true
 
                 logger.info("client($num) is connected")
-                val outThread = OutThread(clientSocket, connection)
-                val inThread = InThread(clientSocket, connection)
-
-                outThread.name = "out-server"
-                inThread.name = "in-server"
-
-                outThread.start()
-                inThread.start()
+                scheduler.thread({ outFun(clientSocket, connection) }).start()
+                scheduler.thread({ inFun(clientSocket, connection) }).start()
 
                 connection.onReady()
 
             }
-        })
-        thread.isDaemon = true
-        thread.start()
+        }).start()
 
     }
 }

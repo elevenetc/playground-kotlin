@@ -1,8 +1,8 @@
 package utils
 
 import org.mockito.Mockito
-import reactive.networks.IServerSocket
-import reactive.networks.ISocket
+import network.IServerSocket
+import network.ISocket
 
 class MockServerSocket(val socket: ISocket) : IServerSocket {
 
@@ -13,7 +13,7 @@ class MockServerSocket(val socket: ISocket) : IServerSocket {
             returned = true
             return socket
         } else {
-            sleepForever()
+            //sleepForever()
             return Mockito.mock(ISocket::class.java)
         }
     }

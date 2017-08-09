@@ -1,4 +1,4 @@
-package reactive.networks
+package network
 
 interface ISocket {
     fun read(): String

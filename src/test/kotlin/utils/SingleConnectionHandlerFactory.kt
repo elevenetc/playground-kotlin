@@ -1,9 +1,10 @@
 package utils
 
-import reactive.networks.ConnectionHandlerFactory
+import network.Connection
+import network.ConnectionHandlerFactory
 
-class SingleConnectionHandlerFactory(val connectionHandler: ConnectionHandler) : ConnectionHandlerFactory {
-    override fun create(): ConnectionHandler {
+class SingleConnectionHandlerFactory(val connectionHandler: Connection) : ConnectionHandlerFactory {
+    override fun create(): Connection {
         return connectionHandler
     }
 }

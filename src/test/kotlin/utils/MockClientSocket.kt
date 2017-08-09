@@ -1,6 +1,6 @@
 package utils
 
-import reactive.networks.ISocket
+import network.ISocket
 
 class MockClientSocket(val message: String) : ISocket {
 

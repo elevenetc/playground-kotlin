@@ -1,11 +1,10 @@
 package utils
 
+import network.IServerSocket
+import network.ISocket
+import network.SocketFactory
 import org.mockito.Mockito
-import reactive.networks.IServerSocket
-import reactive.networks.ISocket
-import reactive.networks.SocketFactory
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingDeque
+import java.util.*
 
 /**
  * SocketFactory which emulates client server interaction.
@@ -13,14 +12,14 @@ import java.util.concurrent.LinkedBlockingDeque
  */
 class BasicConnectionSocketFactory : SocketFactory {
 
-    val serverQueue: BlockingQueue<String> = LinkedBlockingDeque()
-    val clientQueue: BlockingQueue<String> = LinkedBlockingDeque()
+    val serverQueue: Deque<String> = LinkedList()
+    val clientQueue: Deque<String> = LinkedList()
 
     override fun clientSocket(): ISocket {
         return object : ISocket {
 
             override fun read(): String {
-                return clientQueue.take()
+                return clientQueue.first
             }
 
             override fun write(data: String) {
@@ -51,7 +50,7 @@ class BasicConnectionSocketFactory : SocketFactory {
                     return object : ISocket {
 
                         override fun read(): String {
-                            return serverQueue.take()
+                            return serverQueue.first
                         }
 
                         override fun write(data: String) {
