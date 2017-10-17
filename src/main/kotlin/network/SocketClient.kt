@@ -1,54 +1,48 @@
 package network
 
-import org.slf4j.LoggerFactory
-import threading.IThread
 import threading.Scheduler
 
 
 class SocketClient(
-        val connection: Connection,
+        val handler: ConnectionHandler,
         val socketFactory: SocketFactory,
         val scheduler: Scheduler,
-        val reconnectionRetryDelay: Long = 1000) {
-
-    val logger = LoggerFactory.getLogger(SocketClient::class.java)!!
-    var inThread: IThread? = null
-    var outThread: IThread? = null
+        val reconnectionRetryDelay: Long = 1000,
+        var connectAttempts: Int = -1) {
 
     fun connect() {
+        scheduler.thread {
+            internalConnect()
+        }.start()
+    }
 
-        scheduler.thread({
+    fun internalConnect() {
+        try {
+            Connection(socketFactory.clientSocket(), handler).connect()
+            println("client: connected")
+        } catch (e: Exception) {
 
-            logger.info("created")
-            connection.isConnected = true
+            println("client: error connection")
+            e.printStackTrace()
 
-            while (connection.isConnected) {
-                try {
+            reconnectIfNeeded()
+        }
+    }
 
-                    val socket = socketFactory.clientSocket()
+    private fun reconnectIfNeeded() {
 
-                    inThread = scheduler.thread { inFun(socket, connection) }
-                    outThread = scheduler.thread { outFun(socket, connection) }
+        var reconnect: Boolean = false
+        if (connectAttempts == -1) {
+            reconnect = true
+        } else if (connectAttempts > 0) {
+            connectAttempts--
+            reconnect = true
 
-                    inThread?.start()
-                    outThread?.start()
+        }
 
-                    logger.info("connected")
-
-                    connection.onReady()
-
-                    scheduler.sleepForever()
-
-                } catch (e: Exception) {
-                    logger.info("connection error. reconnection in $reconnectionRetryDelay ms")
-                    inThread?.interrupt()
-                    outThread?.interrupt()
-
-                    scheduler.sleepFor(reconnectionRetryDelay)
-                }
-            }
-
-
-        }).start()
+        if (reconnect) {
+            scheduler.sleepFor(reconnectionRetryDelay)
+            internalConnect()
+        }
     }
 }

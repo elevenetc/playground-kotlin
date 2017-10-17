@@ -1,5 +1,5 @@
 package network
 
 interface ConnectionHandlerFactory {
-    fun create(): Connection
+    fun create(): ConnectionHandler
 }

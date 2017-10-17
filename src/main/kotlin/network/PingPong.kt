@@ -6,42 +6,40 @@ fun runPingPong() {
     val port = 9999
     val host = "localhost"
 
-    val currentThread = Thread.currentThread()
-    val daemon = currentThread.isDaemon
-
     org.apache.log4j.BasicConfigurator.configure()
 
     val socketFactory = JavaNetSocketFactory(host, port)
 
 
     SocketServer(object : ConnectionHandlerFactory {
-        override fun create(): Connection {
-            return ServerHandler()
+        override fun create(): ConnectionHandler {
+            return ServerConnectionHandler()
         }
     }, socketFactory, BasicScheduler()).start()
+
     Thread.sleep(2000)
-    SocketClient(ClientHandler(), socketFactory, BasicScheduler()).connect()
+
+    SocketClient(ClientConnectionHandler(), socketFactory, BasicScheduler()).connect()
 
     Thread.sleep(Long.MAX_VALUE)
 }
 
-class ClientHandler : Connection() {
-
-
+class ClientConnectionHandler : ConnectionHandler() {
     override fun onReady() {
-        while (true) {
-            sendMessage("ping")
-            Thread.sleep(1000)
-        }
+        println("client: onReady")
+        sendMessage("ping")
     }
 
-    override fun onNewMessage(message: String) {
-
+    override fun onMessage(message: String) {
+        println("client: onMessage - $message")
+        //check of pong arrived
     }
 }
 
-class ServerHandler : Connection() {
-    override fun onNewMessage(message: String) {
+class ServerConnectionHandler : ConnectionHandler() {
+
+    override fun onMessage(message: String) {
+        println("server: onMessage - $message")
         if (message == "ping") {
             sendMessage("pong")
         }
