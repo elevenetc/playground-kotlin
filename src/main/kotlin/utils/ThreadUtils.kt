@@ -7,3 +7,11 @@ fun sleepForever() {
 fun sleepFor(delay: Long) {
     Thread.sleep(delay)
 }
+
+fun interruptSilently(t: Thread) {
+    try {
+        t.interrupt()
+    } catch (e: Throwable) {
+        //ignore
+    }
+}

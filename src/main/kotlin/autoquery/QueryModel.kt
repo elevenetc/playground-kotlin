@@ -1,0 +1,5 @@
+package autoquery
+
+class QueryModel {
+
+}
