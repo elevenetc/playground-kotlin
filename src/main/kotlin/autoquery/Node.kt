@@ -1,7 +1,14 @@
 package autoquery
 
-open class Node() {
+abstract class Node() {
+
+    var isCompleted: Boolean = false
+    var value: StringBuilder = StringBuilder()
+
+    abstract fun append(char: Char)
+    abstract fun complete(): Boolean
+
     fun simpleName(): String {
-        return ""
+        return value.toString()
     }
 }

@@ -1,7 +1,7 @@
 package autoquery
 
-class Table(name: String, vararg columns: Column) {
-
+class Table(val name: String, vararg columns: Column) {
+    val columns = columns
 }
 
 fun int(name: String): Column {
