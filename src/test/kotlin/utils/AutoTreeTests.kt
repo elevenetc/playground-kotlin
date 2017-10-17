@@ -1,26 +1,21 @@
 package utils
 
-import autoquery.Query
-import autoquery.select
+import autoquery.*
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class AutoTreeTests {
     @Test
     fun hello() {
-        val root =
-                select(
-                        table("students").withColumns("id", "grade"),
-                        table("teachers").withColumns("id", "subject")
-                ).where()
-                        .selectColumns()
-                        .build()
+
+        val query: Query = SelectQuery(
+                Table("students", int("age"), string("name")),
+                Table("teachers", string("subject"))
+        )
+
+        query.append('s')
+        query.complete()
+        assertEquals(1, query.getCurrent().size)
+        assertEquals("select", query.getCurrent()[0].simpleName())
     }
-}
-
-fun initFrom(message: String): Query {
-    return Query(message)
-}
-
-fun table(name: String): Query {
-    return Query(name)
 }
