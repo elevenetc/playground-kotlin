@@ -6,7 +6,7 @@ import kotlin.test.assertTrue
 
 class AndNodeTests {
     @Test
-    fun andNodeTests() {
+    fun test1() {
         val node = AndNode(listOf("hello", "bye"))
         node.append('h')
         node.complete()
@@ -16,6 +16,16 @@ class AndNodeTests {
         node.append('e')
         assertEquals("hello, bye", node.simpleName())
         assertTrue(node.isCompleted)
+    }
+
+    @Test
+    fun testComma() {
+        val node = AndNode(listOf("abc", "cde"))
+        node.append('a')
+        node.append(',')
+        node.append('c')
+        node.complete()
+        assertEquals("abc, cde", node.simpleName())
     }
 
 }

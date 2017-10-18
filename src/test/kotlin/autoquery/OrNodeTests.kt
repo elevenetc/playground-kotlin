@@ -6,7 +6,7 @@ import kotlin.test.assertTrue
 
 class OrNodeTests {
     @Test
-    fun orNodeTests1() {
+    fun test1() {
         val node = OrNode(listOf("hello", "bye"))
         node.append('h')
         node.complete()
@@ -14,7 +14,7 @@ class OrNodeTests {
     }
 
     @Test
-    fun orNodeTests2() {
+    fun test2() {
         val node = OrNode(listOf("hello", "bye"))
         node.append('x')
         node.complete()
@@ -22,7 +22,7 @@ class OrNodeTests {
     }
 
     @Test
-    fun orNodeTests3() {
+    fun test3() {
         val node = OrNode(listOf("hello", "bye"))
         node.append('h')
         node.append('e')
