@@ -44,6 +44,10 @@ class SelectQuery(vararg tables: Table) : Query {
         return queue
     }
 
+    override fun getSimpleName(): String {
+        return toSimpleString(queue)
+    }
+
     private fun getColumns(): List<String> {
         val result = mutableListOf<String>()
         for (table in tables)
@@ -64,4 +68,6 @@ class SelectQuery(vararg tables: Table) : Query {
             currentIndex++
         }
     }
+
+
 }

@@ -8,7 +8,7 @@ abstract class Node() {
     abstract fun append(char: Char)
     abstract fun complete(): Boolean
 
-    fun simpleName(): String {
+    open fun simpleName(): String {
         return value.toString()
     }
 }
