@@ -1,5 +1,0 @@
-package autoquery
-
-class QueryModel {
-
-}
