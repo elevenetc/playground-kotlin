@@ -46,8 +46,8 @@ class SelectQuery(private vararg val tables: Table) : Query {
         return toSimpleString(queue)
     }
 
-    private fun getColumns(): List<Column> {
-        val result = mutableListOf<Column>()
+    private fun getColumns(): List<Column<*>> {
+        val result = mutableListOf<Column<*>>()
         for (table in tables) result += table.columns
         return result
     }
