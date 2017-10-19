@@ -11,7 +11,18 @@ class ExpressionsNodeTests {
         val node = ExpressionsNode(listOf(ageColumn, nameColumn))
         node.append('a')
         node.complete()
-        //TODO should be stored default value in column?
-        assertEquals("age = 0", node.simpleName())
+        assertEquals("age = ", node.simpleName())
+        node.append('1')
+        node.append('0')
+        assertEquals("age = 10", node.simpleName())
+        node.append(',')
+        node.append('n')
+        node.append('a')
+        node.append('m')
+        node.append('e')
+        node.append('b')
+        node.append('o')
+        node.append('b')
+        assertEquals("age = 10, name = bob", node.simpleName())
     }
 }

@@ -10,7 +10,7 @@ class ExpressionsNode(private val columnsVariants: List<Column<*>>) : Node() {
 
         if (mode == Mode.NAME) {
             value.append(char)
-            tryToComplete()
+            isFitSomeName()
         } else if (mode == Mode.VALUE) {
 
             val column = addedColumns.last()
@@ -30,6 +30,7 @@ class ExpressionsNode(private val columnsVariants: List<Column<*>>) : Node() {
                 testValue += char
                 if (column.isValidType(testValue)) {
                     value.append(char)
+                    column.setValue(value.toString())
                 } else {
                     //value doesn't fit type
                 }
@@ -59,13 +60,24 @@ class ExpressionsNode(private val columnsVariants: List<Column<*>>) : Node() {
 
             result.append(column.name)
             result.append(" = ")
-            result.append(column.value)
+            result.append(column.stringValue())
 
             if (i != addedColumns.size - 1) {
                 result.append(", ")
             }
         }
         return result.toString()
+    }
+
+    private fun isFitSomeName() {
+        val index = getFullCompletableIndex(
+                value,
+                columnsVariants.map { it.name },
+                addedColumns.map { it.name }
+        )
+        if (index != -1) {
+            addNewColumn(columnsVariants[index])
+        }
     }
 
     private fun tryToComplete() {
@@ -77,12 +89,15 @@ class ExpressionsNode(private val columnsVariants: List<Column<*>>) : Node() {
         )
 
         if (shortest.isNotEmpty()) {
-            val column = columnsVariants.first { it.name == shortest }
-            addedColumns.add(column)
-            value.setLength(0)
-            mode = Mode.VALUE
-            isCompleted = addedColumns.size == columnsVariants.size
+            addNewColumn(columnsVariants.first { it.name == shortest })
         }
+    }
+
+    private fun addNewColumn(column: Column<*>) {
+        addedColumns.add(column)
+        value.setLength(0)
+        mode = Mode.VALUE
+        isCompleted = addedColumns.size == columnsVariants.size
     }
 
 
