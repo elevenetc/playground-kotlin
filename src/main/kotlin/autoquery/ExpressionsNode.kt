@@ -1,41 +1,40 @@
 package autoquery
 
-class ExpressionsNode(private val columns: List<Column>) : Node() {
+class ExpressionsNode(private val columnsVariants: List<Column<*>>) : Node() {
 
-    private val addedColumns = mutableListOf<Column>()
-    private var mode: Mode = Mode.NAME
+    private val addedColumns = mutableListOf<Column<*>>()
+    private var mode = Mode.NAME
 
     override fun append(char: Char) {
-        if (isCompleted) return
+        //if (isCompleted) return last editable > never completed
 
         if (mode == Mode.NAME) {
             value.append(char)
             tryToComplete()
         } else if (mode == Mode.VALUE) {
+
             val column = addedColumns.last()
-            var testValue = value.toString()
-            testValue += char
-            if (column.isValidType(testValue)) {
-                value.append(char)
+            val currentValue = value.toString()
+            if (char == ',') {
+
+                if (column.isValidType(currentValue)) {
+                    column.setValue(currentValue)
+                    value.setLength(0)
+                    mode = Mode.NAME
+                } else {
+                    //value doesn't fit type
+                }
+
             } else {
-                //invalid type
+                var testValue = currentValue
+                testValue += char
+                if (column.isValidType(testValue)) {
+                    value.append(char)
+                } else {
+                    //value doesn't fit type
+                }
             }
-        }
-    }
 
-    private fun tryToComplete() {
-
-        val shortest = getShortestCompletable(
-                value,
-                columns.map { it.name },
-                addedColumns.map { it.name }
-        )
-
-        if (shortest.isNotEmpty()) {
-            val column: Column = columns.first { it.name == shortest }
-            addedColumns.add(column)
-            value.setLength(0)
-            mode = Mode.VALUE
         }
     }
 
@@ -54,10 +53,41 @@ class ExpressionsNode(private val columns: List<Column>) : Node() {
     }
 
     override fun simpleName(): String {
-        return
+        val result = StringBuilder()
+        for (i in 0 until addedColumns.size) {
+            val column = addedColumns[i]
+
+            result.append(column.name)
+            result.append(" = ")
+            result.append(column.value)
+
+            if (i != addedColumns.size - 1) {
+                result.append(", ")
+            }
+        }
+        return result.toString()
+    }
+
+    private fun tryToComplete() {
+
+        val shortest = getShortestCompletable(
+                value,
+                columnsVariants.map { it.name },
+                addedColumns.map { it.name }
+        )
+
+        if (shortest.isNotEmpty()) {
+            val column = columnsVariants.first { it.name == shortest }
+            addedColumns.add(column)
+            value.setLength(0)
+            mode = Mode.VALUE
+            isCompleted = addedColumns.size == columnsVariants.size
+        }
+    }
+
+
+    enum class Mode {
+        NAME, VALUE
     }
 }
 
-private enum class Mode {
-    NAME, VALUE
-}
