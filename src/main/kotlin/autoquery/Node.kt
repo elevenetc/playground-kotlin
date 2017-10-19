@@ -1,6 +1,6 @@
 package autoquery
 
-abstract class Node() {
+abstract class Node {
 
     var isCompleted: Boolean = false
     var value: StringBuilder = StringBuilder()

@@ -4,19 +4,19 @@ package autoquery
 abstract open class Column<T>(
         val name: String,
         private val type: Class<T>,
-        var value: T,
-        private var stringValue: String = ""
+        var value: T
 ) {
 
+    private val stringValue = StringBuilder()
     val defaultValue: T = value
 
     abstract fun isValidType(value: String): Boolean
 
-    fun setValue(newValue: String) {
-        stringValue = newValue
+    fun stringValue(): String {
+        return stringValue.toString()
     }
 
-    fun stringValue(): String {
-        return stringValue
+    fun append(char: Char) {
+        stringValue.append(char)
     }
 }
