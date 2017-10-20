@@ -61,13 +61,13 @@ fun toSimpleString(value: StringBuilder, completedValues: List<String>): String 
             builder.append(completed)
 
             if (i != completedValues.size - 1) {
-                builder.append(", ")
+                builder.append(" ")
             }
         }
     }
 
     if (!value.isEmpty()) {
-        builder.append(", ")
+        builder.append(" ")
         builder.append(value.toString())
     }
 
@@ -80,14 +80,14 @@ fun toSimpleString(nodes: List<Node>): String {
 
     for (i in 0 until nodes.size) {
         val node = nodes[i]
-        val name = node.simpleName()
+        val name = node.toQuery()
         if (!name.isEmpty()) nonEmpty.add(name)
     }
 
     for (i in 0 until nonEmpty.size) {
         result.append(nonEmpty[i])
 
-        if (i != nonEmpty.size - 1) result.append(", ")
+        if (i != nonEmpty.size - 1) result.append(" ")
     }
 
     return result.toString()

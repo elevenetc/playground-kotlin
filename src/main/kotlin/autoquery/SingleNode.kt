@@ -13,11 +13,12 @@ class SingleNode(private val target: String) : Node() {
         }
     }
 
-    override fun append(char: Char) {
-        if (isCompleted) return
+    override fun append(char: Char):Boolean {
+        if (isCompleted) return false
         value.append(char)
         if (value.toString() == target) {
             isCompleted = true
         }
+        return true
     }
 }

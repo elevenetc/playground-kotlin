@@ -42,7 +42,7 @@ class SelectQuery(private vararg val tables: Table) : Query {
         return queue
     }
 
-    override fun getSimpleName(): String {
+    override fun toQuery(): String {
         return toSimpleString(queue)
     }
 

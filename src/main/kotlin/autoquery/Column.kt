@@ -7,6 +7,7 @@ abstract open class Column<T>(
         var value: T
 ) {
 
+    var union: Union = Union.UNDEFINED
     private val stringValue = StringBuilder()
     val defaultValue: T = value
 

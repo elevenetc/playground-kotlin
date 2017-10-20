@@ -17,13 +17,14 @@ class OrNode(val variants: List<String>) : Node() {
         }
     }
 
-    override fun append(char: Char) {
-        if (isCompleted) return
+    override fun append(char: Char):Boolean {
+        if (isCompleted) return false
         value.append(char)
 
         if (variants.contains(value.toString())) {
             isCompleted = true
         }
+        return true
     }
 
 }

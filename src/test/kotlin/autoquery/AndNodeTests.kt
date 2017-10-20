@@ -10,11 +10,11 @@ class AndNodeTests {
         val node = AndNode(listOf("hello", "bye"))
         node.append('h')
         node.complete()
-        assertEquals("hello", node.simpleName())
+        assertEquals("hello", node.toQuery())
         node.append('b')
         node.append('y')
         node.append('e')
-        assertEquals("hello, bye", node.simpleName())
+        assertEquals("hello bye", node.toQuery())
         assertTrue(node.isCompleted)
     }
 
@@ -25,7 +25,7 @@ class AndNodeTests {
         node.append(',')
         node.append('c')
         node.complete()
-        assertEquals("abc, cde", node.simpleName())
+        assertEquals("abc cde", node.toQuery())
     }
 
 }

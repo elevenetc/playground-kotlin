@@ -5,5 +5,5 @@ interface Query {
     fun complete()
     fun getCurrent(): List<Node>
     fun currentIndex(): Int
-    fun getSimpleName():String
+    fun toQuery():String
 }

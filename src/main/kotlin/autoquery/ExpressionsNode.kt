@@ -2,72 +2,81 @@ package autoquery
 
 class ExpressionsNode(private val columnsVariants: List<Column<*>>) : Node() {
 
-    private val addedColumns = mutableListOf<Column<*>>()
+    val addedColumns = mutableListOf<Column<*>>()
     private var mode = Mode.NAME
-    private var newColumnName = StringBuilder()
+    var newColumnName = StringBuilder()
+    var union = StringBuilder()
 
-    override fun append(char: Char) {
+    override fun append(char: Char): Boolean {
         //if (isCompleted) return last editable > never completed
 
         if (mode == Mode.NAME) {
             newColumnName.append(char)
             isFitSomeName()
+            return true
         } else if (mode == Mode.VALUE) {
 
             val column = addedColumns.last()
             val currentValue = column.stringValue()
-            if (char == ',') {
-                mode = Mode.NAME
+            if (char == ',' && !isInLastColumn()) {
+                mode = Mode.UNION
+                return true
             } else {
                 var testValue = currentValue
                 testValue += char
                 if (column.isValidType(testValue)) {
                     column.append(char)
+                    return true
                 } else {
                     //value doesn't fit type
+                    return false
                 }
             }
+        } else if (mode == Mode.UNION) {
+            var currentUnion = union.toString()
+            currentUnion += char
+
+            if (currentUnion == "and") {
+                setUnion(Union.AND)
+                //TODO: what of last col?
+            } else if (currentUnion == "or") {
+                setUnion(Union.OR)
+                //TODO: what of last col?
+            } else {
+                union.append(char)
+            }
+            return true
         }
+
+        return false
+
+    }
+
+    private fun setUnion(u: Union) {
+        addedColumns.last().union = u
+        union.setLength(0)
+        mode = Mode.NAME
     }
 
     override fun complete(): Boolean {
 
         if (mode == Mode.NAME) {
 
-            tryToComplete()
+            tryToCompleteColumn()
             return mode == Mode.VALUE
 
         } else if (mode == Mode.VALUE) {
             return false
+        } else if (mode == Mode.UNION) {
+            tryToCompleteUnion()
+            return mode == Mode.NAME
         } else {
             throw IllegalArgumentException("Unsupported mode")
         }
     }
 
-    override fun simpleName(): String {
-        val result = StringBuilder()
-        for (i in 0 until addedColumns.size) {
-            val column = addedColumns[i]
-
-            result.append(column.name)
-            result.append(" = ")
-            result.append(column.stringValue())
-
-            if (i != addedColumns.size - 1) {
-                result.append(", ")
-            }
-        }
-
-        if (newColumnName.isNotEmpty()) {
-            if (result.isEmpty()) {
-                result.append(newColumnName.toString())
-            } else {
-                result.append(", ")
-                result.append(newColumnName.toString())
-            }
-        }
-
-        return result.toString()
+    override fun toQuery(): String {
+        return toQuery(this)
     }
 
     private fun isFitSomeName() {
@@ -81,7 +90,7 @@ class ExpressionsNode(private val columnsVariants: List<Column<*>>) : Node() {
         }
     }
 
-    private fun tryToComplete() {
+    private fun tryToCompleteColumn() {
 
         val shortest = getShortestCompletable(
                 newColumnName,
@@ -94,6 +103,18 @@ class ExpressionsNode(private val columnsVariants: List<Column<*>>) : Node() {
         }
     }
 
+    private fun tryToCompleteUnion() {
+        val shortest = getShortestCompletable(union, listOf("and", "or"))
+
+        if (shortest.isNotEmpty()) {
+            if (shortest == "or") {
+                setUnion(Union.OR)
+            } else {
+                setUnion(Union.AND)
+            }
+        }
+    }
+
     private fun addNewColumn(column: Column<*>) {
         addedColumns.add(column)
         newColumnName.setLength(0)
@@ -101,8 +122,12 @@ class ExpressionsNode(private val columnsVariants: List<Column<*>>) : Node() {
         isCompleted = addedColumns.size == columnsVariants.size
     }
 
+    private fun isInLastColumn(): Boolean {
+        return addedColumns.size == columnsVariants.size
+    }
+
     enum class Mode {
-        NAME, VALUE
+        NAME, VALUE, UNION
     }
 }
 
