@@ -1,4 +1,6 @@
-package autoquery
+package autoquery.columns
+
+import autoquery.Column
 
 class StringColumn(name: String) : Column<String>(name, String::class.java, "") {
 

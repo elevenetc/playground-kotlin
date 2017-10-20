@@ -11,12 +11,12 @@ class AndNode(private val variants: List<String>) : Node() {
      * @return true when all [variants] are filled in [completedValues]
      */
     override fun complete(): Boolean {
-        if (isCompleted) return true
+        if (isCompleted()) return true
         return tryToCompleteCurrent()
     }
 
     override fun append(char: Char): Boolean {
-        if (isCompleted) return false
+        if (isCompleted()) return false
 
         if (char == ',') {
             return tryToCompleteCurrent()
@@ -28,7 +28,7 @@ class AndNode(private val variants: List<String>) : Node() {
             if (index > -1) {
                 completedValues.add(value.toString())
                 value.setLength(0)
-                isCompleted = completedValues.size == variants.size
+                if(completedValues.size == variants.size) setCompleted()
             }
             return true
         }
@@ -41,7 +41,7 @@ class AndNode(private val variants: List<String>) : Node() {
         } else {
             value.setLength(0)
             completedValues.add(shortest)
-            isCompleted = completedValues.size == variants.size
+            if(completedValues.size == variants.size) setCompleted()
             true
         }
     }

@@ -1,10 +1,12 @@
-package autoquery
+package autoquery.columns
 
-class IntColumn(name: String) : Column<Int>(name, Int::class.java, 0) {
+import autoquery.Column
+
+class FloatColumn(name: String) : Column<Float>(name, Float::class.java, 0.0f) {
 
     override fun isValidType(value: String): Boolean {
         return try {
-            Integer.parseInt(value)
+            value.toFloat()
             true
         } catch (e: NumberFormatException) {
             false

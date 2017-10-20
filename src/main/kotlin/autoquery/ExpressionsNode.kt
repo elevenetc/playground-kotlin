@@ -38,10 +38,8 @@ class ExpressionsNode(private val columnsVariants: List<Column<*>>) : Node() {
 
             if (currentUnion == "and") {
                 setUnion(Union.AND)
-                //TODO: what of last col?
             } else if (currentUnion == "or") {
                 setUnion(Union.OR)
-                //TODO: what of last col?
             } else {
                 union.append(char)
             }
@@ -55,7 +53,7 @@ class ExpressionsNode(private val columnsVariants: List<Column<*>>) : Node() {
     private fun setUnion(u: Union) {
         addedColumns.last().union = u
         union.setLength(0)
-        mode = Mode.NAME
+        mode = Mode.NAME//TODO: what of last column?
     }
 
     override fun complete(): Boolean {
@@ -119,7 +117,9 @@ class ExpressionsNode(private val columnsVariants: List<Column<*>>) : Node() {
         addedColumns.add(column)
         newColumnName.setLength(0)
         mode = Mode.VALUE
-        isCompleted = addedColumns.size == columnsVariants.size
+        if (addedColumns.size == columnsVariants.size) {
+            setCompleted()
+        }
     }
 
     private fun isInLastColumn(): Boolean {

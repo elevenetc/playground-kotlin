@@ -1,9 +1,9 @@
 package autoquery
 
-class OrNode(val variants: List<String>) : Node() {
+open class OrNode(private val variants: List<String>) : Node() {
 
     override fun complete(): Boolean {
-        if (isCompleted) return true
+        if (isCompleted()) return true
 
         val completable = getShortestCompletable(value, variants)
 
@@ -12,18 +12,14 @@ class OrNode(val variants: List<String>) : Node() {
         } else {
             value.setLength(0)
             value.append(completable)
-            isCompleted = true
+            setCompleted()
             true
         }
     }
 
-    override fun append(char: Char):Boolean {
-        if (isCompleted) return false
+    override fun append(char: Char): Boolean {
+        if (isCompleted()) return false
         value.append(char)
-
-        if (variants.contains(value.toString())) {
-            isCompleted = true
-        }
         return true
     }
 

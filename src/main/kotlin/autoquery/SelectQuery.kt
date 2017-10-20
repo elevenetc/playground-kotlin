@@ -26,7 +26,7 @@ class SelectQuery(private vararg val tables: Table) : Query {
     override fun append(char: Char) {
         val node = queue[currentIndex]
         node.append(char)
-        if (node.isCompleted) {
+        if (node.isCompleted()) {
             moveToNext()
         }
     }
