@@ -1,10 +1,6 @@
-package autoquery
+package autoquery.nodes
 
-import autoquery.columns.BooleanColumn
-import autoquery.columns.FloatColumn
-import autoquery.columns.IntColumn
-import autoquery.columns.StringColumn
-import autoquery.nodes.UnionNode
+import autoquery.columns.*
 import autoquery.nodes.operators.BooleanOperatorNode
 import autoquery.nodes.operators.OperatorNode
 import autoquery.nodes.operators.StringOperatorNode

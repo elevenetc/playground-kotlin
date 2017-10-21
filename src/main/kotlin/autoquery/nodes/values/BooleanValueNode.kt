@@ -1,5 +1,5 @@
 package autoquery.nodes.values
 
-import autoquery.OrNode
+import autoquery.nodes.OrNode
 
 class BooleanValueNode : OrNode(listOf("false", "true"))

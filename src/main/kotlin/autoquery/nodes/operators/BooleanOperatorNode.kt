@@ -1,5 +1,5 @@
 package autoquery.nodes.operators
 
-import autoquery.OrNode
+import autoquery.nodes.OrNode
 
 class BooleanOperatorNode : OrNode(listOf("=", "!="))

@@ -1,4 +1,8 @@
-package autoquery
+package autoquery.nodes
+
+import autoquery.getFullCompletableIndex
+import autoquery.getShortestCompletable
+import autoquery.toSimpleString
 
 class AndNode(private val variants: List<String>) : Node() {
 

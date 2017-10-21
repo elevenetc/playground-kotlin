@@ -1,5 +1,7 @@
 package autoquery
 
+import autoquery.columns.Column
+import autoquery.nodes.*
 import java.util.*
 
 class SelectQuery(private vararg val tables: Table) : Query {
@@ -61,10 +63,6 @@ class SelectQuery(private vararg val tables: Table) : Query {
 
     private fun getTablesNames(): List<String> {
         return tables.map { it.name }
-    }
-
-    private fun current(): Node {
-        return queue[currentIndex]
     }
 
     private fun moveToNext() {

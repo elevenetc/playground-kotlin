@@ -1,6 +1,6 @@
 package autoquery.nodes.values
 
-import autoquery.Node
+import autoquery.nodes.Node
 
 class FloatValueNode : Node() {
 

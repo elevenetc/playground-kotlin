@@ -1,19 +1,18 @@
-package autoquery
+package autoquery.nodes
 
-open class OrNode(private val variants: List<String>) : Node() {
+import autoquery.countCompletable
+
+class SingleNode(private val target: String) : Node() {
 
     override fun complete(): Boolean {
         if (isCompleted()) return true
-
-        val completable = getShortestCompletable(value, variants)
-
-        return if (completable.isEmpty()) {
-            false
-        } else {
+        return if (countCompletable(target, value.toString()) > 0) {
             value.setLength(0)
-            value.append(completable)
+            value.append(target)
             setCompleted()
             true
+        } else {
+            false
         }
     }
 
@@ -22,5 +21,4 @@ open class OrNode(private val variants: List<String>) : Node() {
         value.append(char)
         return true
     }
-
 }

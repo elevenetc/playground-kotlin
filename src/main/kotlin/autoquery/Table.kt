@@ -1,5 +1,6 @@
 package autoquery
 
+import autoquery.columns.Column
 import autoquery.columns.IntColumn
 import autoquery.columns.StringColumn
 

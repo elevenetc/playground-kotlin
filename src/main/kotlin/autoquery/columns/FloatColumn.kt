@@ -1,7 +1,5 @@
 package autoquery.columns
 
-import autoquery.Column
-
 class FloatColumn(name: String) : Column<Float>(name, Float::class.java, 0.0f) {
 
     override fun isValidType(value: String): Boolean {

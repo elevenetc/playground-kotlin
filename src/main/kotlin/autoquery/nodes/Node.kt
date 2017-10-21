@@ -1,4 +1,4 @@
-package autoquery
+package autoquery.nodes
 
 abstract class Node {
 
@@ -41,7 +41,7 @@ abstract class Node {
         return value.toString()
     }
 
-    fun setCompleted(value: String) {
+    private fun setCompleted(value: String) {
         this.value.setLength(0)
         this.value.append(value)
         setCompleted()

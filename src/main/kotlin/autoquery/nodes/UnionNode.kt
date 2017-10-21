@@ -1,5 +1,3 @@
 package autoquery.nodes
 
-import autoquery.OrNode
-
-class UnionNode:OrNode(listOf("or", "and"))
+class UnionNode: OrNode(listOf("or", "and"))

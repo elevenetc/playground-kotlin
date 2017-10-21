@@ -1,8 +1,8 @@
 package autoquery
 
+import autoquery.nodes.SingleNode
 import org.junit.Test
 import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class SingleNodeTests {
     @Test

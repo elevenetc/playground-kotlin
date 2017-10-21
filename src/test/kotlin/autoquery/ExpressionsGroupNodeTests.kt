@@ -1,5 +1,6 @@
 package autoquery
 
+import autoquery.nodes.ExpressionsGroupNode
 import org.junit.Test
 import kotlin.test.assertEquals
 
