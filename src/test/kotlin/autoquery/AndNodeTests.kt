@@ -15,7 +15,7 @@ class AndNodeTests {
         node.append('y')
         node.append('e')
         assertEquals("hello bye", node.toQuery())
-        assertTrue(node.isCompleted)
+        assertTrue(node.isCompleted())
     }
 
     @Test

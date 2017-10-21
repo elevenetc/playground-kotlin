@@ -40,16 +40,12 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
             nodes.removeLast()
             selectedColumns.add(selectedColumnName)
 
-            if (selectedColumn is StringColumn) {
-                nodes.add(ExpressionNode(selectedColumn, StringOperatorNode(), StringValueNode()))
-            } else if (selectedColumn is BooleanColumn) {
-                nodes.add(ExpressionNode(selectedColumn, BooleanOperatorNode(), BooleanValueNode()))
-            } else if (selectedColumn is IntColumn) {
-                nodes.add(ExpressionNode(selectedColumn, OperatorNode(), IntValueNode()))
-            } else if (selectedColumn is FloatColumn) {
-                nodes.add(ExpressionNode(selectedColumn, OperatorNode(), FloatValueNode()))
-            } else {
-                throw RuntimeException("Invalid column type: $selectedColumn")
+            when (selectedColumn) {
+                is StringColumn -> nodes.add(ExpressionNode(selectedColumn, StringOperatorNode(), StringValueNode()))
+                is BooleanColumn -> nodes.add(ExpressionNode(selectedColumn, BooleanOperatorNode(), BooleanValueNode()))
+                is IntColumn -> nodes.add(ExpressionNode(selectedColumn, OperatorNode(), IntValueNode()))
+                is FloatColumn -> nodes.add(ExpressionNode(selectedColumn, OperatorNode(), FloatValueNode()))
+                else -> throw RuntimeException("Invalid column type: $selectedColumn")
             }
         }))
     }

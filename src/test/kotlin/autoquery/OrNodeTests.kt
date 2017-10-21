@@ -10,7 +10,7 @@ class OrNodeTests {
         val node = OrNode(listOf("hello", "bye"))
         node.append('h')
         node.complete()
-        assertTrue(node.isCompleted)
+        assertTrue(node.isCompleted())
     }
 
     @Test
@@ -18,7 +18,7 @@ class OrNodeTests {
         val node = OrNode(listOf("hello", "bye"))
         node.append('x')
         node.complete()
-        assertFalse(node.isCompleted)
+        assertFalse(node.isCompleted())
     }
 
     @Test
@@ -29,6 +29,8 @@ class OrNodeTests {
         node.append('l')
         node.append('l')
         node.append('o')
-        assertTrue(node.isCompleted)
+        assertFalse(node.isCompleted())
+        node.complete()
+        assertTrue(node.isCompleted())
     }
 }
