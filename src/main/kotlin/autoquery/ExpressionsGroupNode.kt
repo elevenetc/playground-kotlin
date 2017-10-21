@@ -16,7 +16,7 @@ import java.util.*
 
 class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node() {
 
-    private val nodes = LinkedList<Node>()
+    val nodes = LinkedList<Node>()
     private val selectedColumns = mutableListOf<String>()
 
     init {

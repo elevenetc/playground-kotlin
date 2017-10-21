@@ -20,7 +20,7 @@ class SelectQuery(private vararg val tables: Table) : Query {
         queue.add(SingleNode("from"))
         queue.add(OrNode(tableNames))
         queue.add(SingleNode("where"))
-        queue.add(ExpressionsNode(columns))
+        queue.add(ExpressionsGroupNode(columns))
     }
 
     override fun append(char: Char) {
