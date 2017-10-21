@@ -5,7 +5,12 @@ import autoquery.Node
 class FloatValueNode : Node() {
 
     override fun complete(): Boolean {
-        return false
+        return if (!value.isEmpty()) {
+            setCompleted()
+            true
+        } else {
+            false
+        }
     }
 
     override fun append(char: Char): Boolean {

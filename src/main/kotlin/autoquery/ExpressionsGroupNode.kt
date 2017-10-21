@@ -4,6 +4,7 @@ import autoquery.columns.BooleanColumn
 import autoquery.columns.FloatColumn
 import autoquery.columns.IntColumn
 import autoquery.columns.StringColumn
+import autoquery.nodes.UnionNode
 import autoquery.nodes.operators.BooleanOperatorNode
 import autoquery.nodes.operators.OperatorNode
 import autoquery.nodes.operators.StringOperatorNode
@@ -55,19 +56,23 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
     }
 
     override fun append(char: Char): Boolean {
-        if (isCompleted()) return true
+        //if (isCompleted()) return true
         return nodes.last.append(char)
     }
 
     override fun complete(): Boolean {
-        if (isCompleted()) return true
+        //if (isCompleted()) return true TODO: add complete case as it's needed to move to the next node
         return nodes.last.complete()
     }
 
     override fun toQuery(): String {
         val result = StringBuilder()
-        for (node in nodes) {
+        for (i in 0 until nodes.size) {
+            val node = nodes[i]
             result.append(node.toQuery())
+            if (i != nodes.size - 1) {
+                result.append(' ')
+            }
         }
         return result.toString()
     }
@@ -79,7 +84,13 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
     ) : Node() {
 
         init {
-            valueNode.setOnCompletedHandler { addColumnNameNode() }
+            valueNode.setOnCompletedHandler {
+                val union = UnionNode()
+                union.setOnCompletedHandler {
+                    addColumnNameNode()
+                }
+                nodes.add(union)
+            }
         }
 
         override fun append(char: Char): Boolean {
