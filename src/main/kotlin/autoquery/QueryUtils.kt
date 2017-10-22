@@ -69,7 +69,7 @@ fun toSimpleString(value: StringBuilder, completedValues: List<String>): String 
     }
 
     if (!value.isEmpty()) {
-        builder.append(" ")
+        if (completedValues.isNotEmpty()) builder.append(" ")
         builder.append(value.toString())
     }
 

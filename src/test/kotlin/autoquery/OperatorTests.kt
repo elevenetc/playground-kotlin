@@ -1,6 +1,6 @@
 package autoquery
 
-import autoquery.nodes.operators.BooleanOperatorNode
+import autoquery.operators.BooleanOperatorNode
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
 import org.junit.Test

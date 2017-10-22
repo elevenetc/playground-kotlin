@@ -1,8 +1,8 @@
 package autoquery
 
-import autoquery.nodes.values.BooleanValueNode
-import autoquery.nodes.values.FloatValueNode
-import autoquery.nodes.values.StringValueNode
+import autoquery.values.BooleanValueNode
+import autoquery.values.FloatValueNode
+import autoquery.values.StringValueNode
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
