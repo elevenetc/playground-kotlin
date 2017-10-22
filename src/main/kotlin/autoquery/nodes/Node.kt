@@ -6,6 +6,8 @@ abstract class Node {
     var blockInvalidCharsOnAppend = false
     var value: StringBuilder = StringBuilder()
     var onCompleteHandler: (node: Node) -> Unit = {}
+    var onNotCompleteHandler: (node: Node) -> Unit = {}
+    var onDeletedAll: (node: Node) -> Unit = {}
 
     private var isCompleted: Boolean = false
 
@@ -15,6 +17,20 @@ abstract class Node {
      * or value with this char is invalid
      */
     abstract fun append(char: Char): Boolean
+
+    open fun delete(): Boolean {
+
+        if (value.isEmpty()) {
+            onDeletedAll(this)
+            return false
+        }
+
+        value.deleteCharAt(value.length - 1)
+
+        if (isCompleted()) setNotCompleted()
+
+        return true
+    }
 
     /**
      * When called it should be decided if node is completed and called [setCompleted]
@@ -41,7 +57,7 @@ abstract class Node {
         return value.toString()
     }
 
-    private fun setCompleted(value: String) {
+    fun setCompleted(value: String) {
         this.value.setLength(0)
         this.value.append(value)
         setCompleted()
@@ -50,5 +66,10 @@ abstract class Node {
     open fun setCompleted() {
         isCompleted = true
         onCompleteHandler(this)
+    }
+
+    fun setNotCompleted() {
+        isCompleted = false
+        onNotCompleteHandler(this)
     }
 }

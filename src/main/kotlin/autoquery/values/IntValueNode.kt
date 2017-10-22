@@ -1,4 +1,4 @@
-package autoquery.nodes.values
+package autoquery.values
 
 import autoquery.nodes.Node
 
@@ -12,6 +12,10 @@ class IntValueNode : Node() {
         } else {
             false
         }
+    }
+
+    override fun delete(): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun append(char: Char): Boolean {

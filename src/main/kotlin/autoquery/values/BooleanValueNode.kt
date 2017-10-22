@@ -1,4 +1,4 @@
-package autoquery.nodes.values
+package autoquery.values
 
 import autoquery.nodes.OrNode
 

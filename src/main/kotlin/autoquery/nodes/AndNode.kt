@@ -1,5 +1,6 @@
 package autoquery.nodes
 
+import autoquery.deleteLastChar
 import autoquery.getFullCompletableIndex
 import autoquery.getShortestCompletable
 import autoquery.toSimpleString
@@ -22,8 +23,8 @@ class AndNode(private val variants: List<String>) : Node() {
     override fun append(char: Char): Boolean {
         if (isCompleted()) return false
 
-        if (char == ',') {
-            return tryToCompleteCurrent()
+        return if (char == ',') {
+            tryToCompleteCurrent()
         } else {
             value.append(char)
 
@@ -32,9 +33,26 @@ class AndNode(private val variants: List<String>) : Node() {
             if (index > -1) {
                 completedValues.add(value.toString())
                 value.setLength(0)
-                if(completedValues.size == variants.size) setCompleted()
+                if (completedValues.size == variants.size) setCompleted()
             }
-            return true
+            true
+        }
+    }
+
+    override fun delete(): Boolean {
+        return if (value.isEmpty() && completedValues.isEmpty()) {
+            onDeletedAll(this)
+            false
+        } else if (value.isEmpty()) {
+            val last = completedValues.removeAt(completedValues.size - 1)
+            value.append(last)
+            delete()
+        } else {
+            deleteLastChar(value)
+
+            if (isCompleted()) setNotCompleted()
+
+            true
         }
     }
 
@@ -45,7 +63,7 @@ class AndNode(private val variants: List<String>) : Node() {
         } else {
             value.setLength(0)
             completedValues.add(shortest)
-            if(completedValues.size == variants.size) setCompleted()
+            if (completedValues.size == variants.size) setCompleted()
             true
         }
     }

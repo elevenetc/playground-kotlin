@@ -1,13 +1,13 @@
 package autoquery.nodes
 
 import autoquery.columns.*
-import autoquery.nodes.operators.BooleanOperatorNode
-import autoquery.nodes.operators.OperatorNode
-import autoquery.nodes.operators.StringOperatorNode
-import autoquery.nodes.values.BooleanValueNode
-import autoquery.nodes.values.FloatValueNode
-import autoquery.nodes.values.IntValueNode
-import autoquery.nodes.values.StringValueNode
+import autoquery.operators.BooleanOperatorNode
+import autoquery.operators.OperatorNode
+import autoquery.operators.StringOperatorNode
+import autoquery.values.BooleanValueNode
+import autoquery.values.FloatValueNode
+import autoquery.values.IntValueNode
+import autoquery.values.StringValueNode
 import java.util.*
 
 class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node() {
@@ -16,7 +16,7 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
     private val selectedColumns = mutableListOf<String>()
 
     init {
-        addColumnNameNode()
+        initGroup()
     }
 
     private fun addColumnNameNode() {
@@ -78,6 +78,9 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
             private val operatorNode: Node,
             private val valueNode: Node
     ) : Node() {
+        override fun delete(): Boolean {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
 
         init {
             valueNode.setOnCompletedHandler {
@@ -126,6 +129,27 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
 
 
         }
+    }
+
+    override fun delete(): Boolean {
+        return if (nodes[0].value.isEmpty()) {
+            onDeletedAll(this)
+            false
+        } else {
+            if (isCompleted()) setNotCompleted()
+            val lastNode = nodes[nodes.size - 1]
+            return if (lastNode.value.isEmpty()) {
+                nodes.removeLast()
+                if (nodes.isEmpty()) initGroup()
+                true
+            } else {
+                lastNode.delete()
+            }
+        }
+    }
+
+    private fun initGroup() {
+        addColumnNameNode()
     }
 
 

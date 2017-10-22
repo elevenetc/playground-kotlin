@@ -29,4 +29,36 @@ class AndNodeTests {
         assertEquals("abc cde", node.toQuery())
     }
 
+    @Test
+    fun deleteChars() {
+        val node = fillHelloBye()
+        node.delete()
+        assertEquals("hello by", node.toQuery())
+        node.delete()
+        assertEquals("hello b", node.toQuery())
+        node.delete()
+        assertEquals("hello", node.toQuery())
+        node.delete()
+        assertEquals("hell", node.toQuery())
+        node.delete()
+        assertEquals("hel", node.toQuery())
+        node.delete()
+        assertEquals("he", node.toQuery())
+        node.delete()
+        assertEquals("h", node.toQuery())
+        node.delete()
+        assertEquals("", node.toQuery())
+        node.delete()
+        assertEquals("", node.toQuery())
+    }
+
+    fun fillHelloBye(): AndNode {
+        val node = AndNode(listOf("hello", "bye"))
+        node.append('h')
+        node.complete()
+        node.append('b')
+        node.complete()
+        return node
+    }
+
 }

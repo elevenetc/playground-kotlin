@@ -1,4 +1,4 @@
-package autoquery.nodes.operators
+package autoquery.operators
 
 import autoquery.nodes.OrNode
 
