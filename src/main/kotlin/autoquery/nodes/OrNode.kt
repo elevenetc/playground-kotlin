@@ -25,4 +25,12 @@ open class OrNode(private val variants: List<String>) : Node() {
         return true
     }
 
+    override fun delete(): Boolean {
+        return if (!value.isEmpty()) {
+            value.setLength(value.length - 1)
+            true
+        } else {
+            false
+        }
+    }
 }

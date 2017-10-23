@@ -72,4 +72,8 @@ abstract class Node {
         isCompleted = false
         onNotCompleteHandler(this)
     }
+
+    open fun isEmpty(): Boolean {
+        return value.isEmpty()
+    }
 }

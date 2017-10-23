@@ -19,7 +19,7 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
         initGroup()
     }
 
-    private fun addColumnNameNode() {
+    private fun addColumnNameNode(value: String = "") {
 
         if (isCompleted()) return
 
@@ -29,7 +29,7 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
                 .filterNot { selectedColumns.contains(it.name) }
                 .map { it.name }
 
-        nodes.add(ColumnNameNode(
+        val newNode = ColumnNameNode(
                 notSelectedColumns
         ).setOnCompletedHandler({
             val selectedColumnName = it.value.toString()
@@ -44,7 +44,11 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
                 is FloatColumn -> nodes.add(ExpressionNode(selectedColumn, OperatorNode(), FloatValueNode()))
                 else -> throw RuntimeException("Invalid column type: $selectedColumn")
             }
-        }))
+        })
+
+        if (!value.isEmpty()) newNode.value.append(value)
+
+        nodes.add(newNode)
     }
 
     override fun isCompleted(): Boolean {
@@ -73,13 +77,54 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
         return result.toString()
     }
 
+    override fun delete(): Boolean {
+        return if (nodes[0].isEmpty()) {
+            onDeletedAll(this)
+            false
+        } else {
+            if (isCompleted()) setNotCompleted()
+            val lastNode = nodes[nodes.size - 1]
+            return if (lastNode.isEmpty()) {
+                nodes.removeLast()
+                if (nodes.isEmpty()) initGroup()
+                true
+            } else {
+                lastNode.delete()
+            }
+        }
+    }
+
+    private fun initGroup() {
+        addColumnNameNode()
+    }
+
     inner class ExpressionNode(
-            val column: Column<*>,
+            private val column: Column<*>,
             private val operatorNode: Node,
             private val valueNode: Node
     ) : Node() {
+
+        override fun isEmpty(): Boolean {
+            /**
+             * Never empty. As column is defined always.
+             * If delete called on column it's replaced with [ColumnNameNode]
+             */
+            return false
+        }
+
         override fun delete(): Boolean {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+            if (!valueNode.isEmpty()) {
+                return valueNode.delete()
+            } else if (!operatorNode.isEmpty()) {
+                return operatorNode.delete()
+            } else {
+                val removedColumn = column.name
+                selectedColumns.remove(removedColumn)
+                nodes.removeLast()
+                addColumnNameNode(removedColumn.substring(0, removedColumn.length - 1))
+                return true
+            }
         }
 
         init {
@@ -118,38 +163,24 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
 
         override fun toQuery(): String {
 
-            if (!operatorNode.isCompleted()) {
-                return column.name
+            return if (!operatorNode.isCompleted()) {
+                column.name
             } else {
                 val name = column.name
                 val operator = operatorNode.toQuery()
                 val value = valueNode.toQuery()
-                return "$name $operator $value"
-            }
+                when {
+                    operator.isEmpty() -> {
+                        "$name"
+                    }
+                    value.isEmpty() -> {
+                        "$name $operator"
+                    }
+                    else -> "$name $operator $value"
+                }
 
-
-        }
-    }
-
-    override fun delete(): Boolean {
-        return if (nodes[0].value.isEmpty()) {
-            onDeletedAll(this)
-            false
-        } else {
-            if (isCompleted()) setNotCompleted()
-            val lastNode = nodes[nodes.size - 1]
-            return if (lastNode.value.isEmpty()) {
-                nodes.removeLast()
-                if (nodes.isEmpty()) initGroup()
-                true
-            } else {
-                lastNode.delete()
             }
         }
-    }
-
-    private fun initGroup() {
-        addColumnNameNode()
     }
 
 

@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 
 class ExpressionsGroupNodeTests {
     @Test
-    fun test() {
+    fun appendTest() {
         val node = ExpressionsGroupNode(listOf(
                 int("age"),
                 string("name")
@@ -45,5 +45,45 @@ class ExpressionsGroupNodeTests {
         node.append('z')
 
         assertEquals("age >= 1 and name != zzz", node.toQuery())
+    }
+
+    @Test
+    fun deleteTest() {
+        val node = ExpressionsGroupNode(listOf(
+                int("age"),
+                string("name")
+        ))
+        node.append('a')
+        node.complete()
+        node.append('=')
+        node.complete()
+        node.append('1')
+        node.append('0')
+
+        assertEquals("age = 10", node.toQuery())
+
+        node.delete()
+
+        assertEquals("age = 1", node.toQuery())
+
+        node.delete()
+
+        assertEquals("age =", node.toQuery())
+
+        node.delete()
+
+        assertEquals("age", node.toQuery())
+
+        node.delete()
+
+        assertEquals("ag", node.toQuery())
+
+        node.delete()
+
+        assertEquals("a", node.toQuery())
+
+        node.delete()
+
+        assertEquals("", node.toQuery())
     }
 }

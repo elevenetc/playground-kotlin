@@ -2,6 +2,7 @@ package autoquery
 
 import autoquery.nodes.OrNode
 import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -33,5 +34,20 @@ class OrNodeTests {
         assertFalse(node.isCompleted())
         node.complete()
         assertTrue(node.isCompleted())
+    }
+
+    @Test
+    fun deleteTest() {
+        val node = OrNode(listOf("hello", "bye"))
+        node.append('b')
+        node.append('y')
+        node.append('e')
+        node.complete()
+        node.delete()
+        assertEquals("by", node.toQuery())
+        node.delete()
+        assertEquals("b", node.toQuery())
+        node.delete()
+        assertEquals("", node.toQuery())
     }
 }

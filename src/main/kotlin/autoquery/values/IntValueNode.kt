@@ -14,10 +14,6 @@ class IntValueNode : Node() {
         }
     }
 
-    override fun delete(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun append(char: Char): Boolean {
         var newValue = value.toString() + char
         return try {

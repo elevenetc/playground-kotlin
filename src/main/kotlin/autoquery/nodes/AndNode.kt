@@ -1,6 +1,5 @@
 package autoquery.nodes
 
-import autoquery.deleteLastChar
 import autoquery.getFullCompletableIndex
 import autoquery.getShortestCompletable
 import autoquery.toSimpleString
@@ -46,9 +45,9 @@ class AndNode(private val variants: List<String>) : Node() {
         } else if (value.isEmpty()) {
             val last = completedValues.removeAt(completedValues.size - 1)
             value.append(last)
-            delete()
+            this.delete()
         } else {
-            deleteLastChar(value)
+            value.setLength(value.length - 1)
 
             if (isCompleted()) setNotCompleted()
 
@@ -70,5 +69,9 @@ class AndNode(private val variants: List<String>) : Node() {
 
     override fun toQuery(): String {
         return toSimpleString(value, completedValues)
+    }
+
+    override fun isEmpty(): Boolean {
+        return !value.isEmpty() || !completedValues.isEmpty()
     }
 }
