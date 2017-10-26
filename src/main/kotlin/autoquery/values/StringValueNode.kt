@@ -19,6 +19,8 @@ class StringValueNode : Node() {
     }
 
     override fun delete(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (value.isEmpty()) return false
+        value.setLength(value.length - 1)
+        return true
     }
 }

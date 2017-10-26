@@ -68,7 +68,7 @@ class ExpressionsGroupNodeTests {
 
         node.delete()
 
-        assertEquals("age =", node.toQuery())
+        assertEquals("age = ", node.toQuery())
 
         node.delete()
 

@@ -7,5 +7,6 @@ interface Query {
     fun complete()
     fun getCurrent(): List<Node>
     fun currentIndex(): Int
-    fun toQuery():String
+    fun toQuery(): String
+    fun deleteChar(): Boolean
 }

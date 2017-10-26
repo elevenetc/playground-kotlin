@@ -77,13 +77,19 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
         return result.toString()
     }
 
+    /**
+     * Removes last char from last node of [nodes]
+     * If node isEmpty then it removed from [nodes]
+     *
+     * So empty node is acceptable because user should have ability to start typing again
+     */
     override fun delete(): Boolean {
         return if (nodes[0].isEmpty()) {
             onDeletedAll(this)
             false
         } else {
             if (isCompleted()) setNotCompleted()
-            val lastNode = nodes[nodes.size - 1]
+            val lastNode = nodes.last
             return if (lastNode.isEmpty()) {
                 nodes.removeLast()
                 if (nodes.isEmpty()) initGroup()
@@ -92,6 +98,10 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
                 lastNode.delete()
             }
         }
+    }
+
+    override fun isEmpty(): Boolean {
+        return nodes.size == 1 && nodes.last.isEmpty()
     }
 
     private fun initGroup() {
@@ -104,6 +114,8 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
             private val valueNode: Node
     ) : Node() {
 
+        var cursor = 1
+
         override fun isEmpty(): Boolean {
             /**
              * Never empty. As column is defined always.
@@ -114,16 +126,22 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
 
         override fun delete(): Boolean {
 
-            if (!valueNode.isEmpty()) {
-                return valueNode.delete()
-            } else if (!operatorNode.isEmpty()) {
-                return operatorNode.delete()
-            } else {
-                val removedColumn = column.name
-                selectedColumns.remove(removedColumn)
-                nodes.removeLast()
-                addColumnNameNode(removedColumn.substring(0, removedColumn.length - 1))
+            if (cursor == 2) {
+                valueNode.delete()
+                if (valueNode.isEmpty()) cursor = 1
                 return true
+            } else {//1
+
+                return if (operatorNode.isEmpty()) {
+                    val removedColumn = column.name
+                    selectedColumns.remove(removedColumn)
+                    nodes.removeLast()
+                    addColumnNameNode(removedColumn.substring(0, removedColumn.length - 1))
+                    true
+                } else {
+                    operatorNode.delete()
+                    true
+                }
             }
         }
 
@@ -140,10 +158,13 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
         override fun append(char: Char): Boolean {
             if (isCompleted()) return false
 
-            return if (!operatorNode.isCompleted()) {
+            return if (cursor == 1) {
                 operatorNode.append(char)
+                if (operatorNode.isCompleted()) cursor = 2
+                true
             } else {
                 valueNode.append(char)
+                true
             }
         }
 
@@ -155,6 +176,7 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
             if (isCompleted()) return true
 
             return if (!operatorNode.isCompleted()) {
+                cursor = 2
                 operatorNode.complete()
             } else {
                 valueNode.complete()
@@ -174,7 +196,7 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
                         "$name"
                     }
                     value.isEmpty() -> {
-                        "$name $operator"
+                        "$name $operator "
                     }
                     else -> "$name $operator $value"
                 }

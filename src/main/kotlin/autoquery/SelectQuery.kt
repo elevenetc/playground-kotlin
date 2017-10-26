@@ -65,6 +65,17 @@ class SelectQuery(private vararg val tables: Table) : Query {
         return tables.map { it.name }
     }
 
+    override fun deleteChar(): Boolean {
+        return if (currentIndex == 0 && queue[0].isEmpty()) {
+            false
+        } else if (queue[currentIndex].isEmpty()) {
+            currentIndex--
+            deleteChar()
+        } else {
+            queue[currentIndex].delete()
+        }
+    }
+
     private fun moveToNext() {
         if (currentIndex < queue.size - 1) {
             currentIndex++

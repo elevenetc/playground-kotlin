@@ -3,9 +3,9 @@ package autoquery
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class SelectQueryTests {
+class IntegrationTests {
     @Test
-    fun hello() {
+    fun selectFillAndDelete() {
 
         val query: Query = SelectQuery(
                 Table("students", int("age"), string("name")),
@@ -66,6 +66,15 @@ class SelectQueryTests {
         query.append('o')
         query.append('b')
 
-        assertEquals("select name from students where age <= 18 or name = bob", query.toQuery())
+        val fullQuery = "select name from students where age <= 18 or name = bob"
+        assertEquals(fullQuery, query.toQuery())
+
+        val sb = StringBuilder(fullQuery)
+        while (!sb.isEmpty()) {
+            query.deleteChar()
+            sb.setLength(sb.length - 1)
+
+            assertEquals(sb.toString(), query.toQuery())
+        }
     }
 }
