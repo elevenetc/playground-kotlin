@@ -10,7 +10,21 @@ import autoquery.values.IntValueNode
 import autoquery.values.StringValueNode
 import java.util.*
 
-class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node() {
+class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : ExpressionsGroup, Node() {
+
+    override fun addUnion() {
+        val union = UnionNode()
+        union.setOnCompletedHandler {
+            addColumnNameNode()
+        }
+        nodes.add(union)
+    }
+
+    override fun removeLast(columnName: String) {
+        selectedColumns.remove(columnName)
+        nodes.removeLast()
+        addColumnNameNode(columnName)
+    }
 
     val nodes = LinkedList<Node>()
     private val selectedColumns = mutableListOf<String>()
@@ -38,10 +52,10 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
             selectedColumns.add(selectedColumnName)
 
             when (selectedColumn) {
-                is StringColumn -> nodes.add(ExpressionNode(selectedColumn, StringOperatorNode(), StringValueNode()))
-                is BooleanColumn -> nodes.add(ExpressionNode(selectedColumn, BooleanOperatorNode(), BooleanValueNode()))
-                is IntColumn -> nodes.add(ExpressionNode(selectedColumn, OperatorNode(), IntValueNode()))
-                is FloatColumn -> nodes.add(ExpressionNode(selectedColumn, OperatorNode(), FloatValueNode()))
+                is StringColumn -> nodes.add(ExpressionNode(this, selectedColumn, StringOperatorNode(), StringValueNode()))
+                is BooleanColumn -> nodes.add(ExpressionNode(this, selectedColumn, BooleanOperatorNode(), BooleanValueNode()))
+                is IntColumn -> nodes.add(ExpressionNode(this, selectedColumn, OperatorNode(), IntValueNode()))
+                is FloatColumn -> nodes.add(ExpressionNode(this, selectedColumn, OperatorNode(), FloatValueNode()))
                 else -> throw RuntimeException("Invalid column type: $selectedColumn")
             }
         })
@@ -107,104 +121,6 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Node(
     private fun initGroup() {
         addColumnNameNode()
     }
-
-    inner class ExpressionNode(
-            private val column: Column<*>,
-            private val operatorNode: Node,
-            private val valueNode: Node
-    ) : Node() {
-
-        var cursor = 1
-
-        override fun isEmpty(): Boolean {
-            /**
-             * Never empty. As column is defined always.
-             * If delete called on column it's replaced with [ColumnNameNode]
-             */
-            return false
-        }
-
-        override fun delete(): Boolean {
-
-            if (cursor == 2) {
-                valueNode.delete()
-                if (valueNode.isEmpty()) cursor = 1
-                return true
-            } else {//1
-
-                return if (operatorNode.isEmpty()) {
-                    val removedColumn = column.name
-                    selectedColumns.remove(removedColumn)
-                    nodes.removeLast()
-                    addColumnNameNode(removedColumn.substring(0, removedColumn.length - 1))
-                    true
-                } else {
-                    operatorNode.delete()
-                    true
-                }
-            }
-        }
-
-        init {
-            valueNode.setOnCompletedHandler {
-                val union = UnionNode()
-                union.setOnCompletedHandler {
-                    addColumnNameNode()
-                }
-                nodes.add(union)
-            }
-        }
-
-        override fun append(char: Char): Boolean {
-            if (isCompleted()) return false
-
-            return if (cursor == 1) {
-                operatorNode.append(char)
-                if (operatorNode.isCompleted()) cursor = 2
-                true
-            } else {
-                valueNode.append(char)
-                true
-            }
-        }
-
-        override fun isCompleted(): Boolean {
-            return operatorNode.isCompleted() && valueNode.isCompleted()
-        }
-
-        override fun complete(): Boolean {
-            if (isCompleted()) return true
-
-            return if (!operatorNode.isCompleted()) {
-                cursor = 2
-                operatorNode.complete()
-            } else {
-                valueNode.complete()
-            }
-        }
-
-        override fun toQuery(): String {
-
-            return if (!operatorNode.isCompleted()) {
-                column.name
-            } else {
-                val name = column.name
-                val operator = operatorNode.toQuery()
-                val value = valueNode.toQuery()
-                when {
-                    operator.isEmpty() -> {
-                        "$name"
-                    }
-                    value.isEmpty() -> {
-                        "$name $operator "
-                    }
-                    else -> "$name $operator $value"
-                }
-
-            }
-        }
-    }
-
 
     inner class ColumnNameNode(columnNames: List<String>) : OrNode(columnNames)
 
