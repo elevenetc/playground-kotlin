@@ -53,6 +53,9 @@ abstract class Node {
         return isCompleted
     }
 
+    /**
+     * @return part of valid SQLite query
+     */
     open fun toQuery(): String {
         return value.toString()
     }

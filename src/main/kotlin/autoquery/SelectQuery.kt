@@ -10,42 +10,47 @@ class SelectQuery(private vararg val tables: Table) : Query {
         return currentIndex
     }
 
-    private val queue: MutableList<Node> = LinkedList()
+    private val nodes: MutableList<Node> = LinkedList()
     private var currentIndex: Int = 0
 
     init {
         val columnsNames = getColumnsNames()
         val tableNames = getTablesNames()
         val columns = getColumns()
-        queue.add(SingleNode("select"))
-        queue.add(AndNode(columnsNames))
-        queue.add(SingleNode("from"))
-        queue.add(OrNode(tableNames))
-        queue.add(SingleNode("where"))
-        queue.add(ExpressionsGroupNode(columns))
+        nodes.add(SingleNode("select"))
+        nodes.add(FixedSpaceNode())
+        nodes.add(ColumnsNode(columnsNames))
+        nodes.add(FixedSpaceNode())
+        nodes.add(SingleNode("from"))
+        nodes.add(FixedSpaceNode())
+        nodes.add(OrNode(tableNames))
+        nodes.add(FixedSpaceNode())
+        nodes.add(SingleNode("where"))
+        nodes.add(FixedSpaceNode())
+        nodes.add(ExpressionsGroupNode(columns))
     }
 
     override fun append(char: Char) {
-        val node = queue[currentIndex]
+        val node = nodes[currentIndex]
         node.append(char)
-        if (node.isCompleted()) {
-            moveToNext()
-        }
+        //if (node.isCompleted()) {
+        //    moveToNext()
+        //}
     }
 
     override fun complete() {
-        val node = queue[currentIndex]
+        val node = nodes[currentIndex]
         if (node.complete()) {
             moveToNext()
         }
     }
 
     override fun getCurrent(): List<Node> {
-        return queue
+        return nodes
     }
 
     override fun toQuery(): String {
-        return toSimpleString(queue)
+        return andNodeToQuery(nodes, currentIndex)
     }
 
     private fun getColumns(): List<Column<*>> {
@@ -66,19 +71,27 @@ class SelectQuery(private vararg val tables: Table) : Query {
     }
 
     override fun deleteChar(): Boolean {
-        return if (currentIndex == 0 && queue[0].isEmpty()) {
+
+        if (nodes[currentIndex] is FixedSpaceNode) {
+            currentIndex--
+            return true
+        }
+
+        return if (currentIndex == 0 && nodes[0].isEmpty()) {
             false
-        } else if (queue[currentIndex].isEmpty()) {
+        } else if (nodes[currentIndex].isEmpty()) {
             currentIndex--
             deleteChar()
         } else {
-            queue[currentIndex].delete()
+            nodes[currentIndex].delete()
         }
     }
 
     private fun moveToNext() {
-        if (currentIndex < queue.size - 1) {
+        if (currentIndex < nodes.size - 1) {
             currentIndex++
+
+            if (nodes[currentIndex] is FixedSpaceNode) moveToNext()
         }
     }
 

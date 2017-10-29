@@ -55,7 +55,7 @@ fun countCompletable(target: String, value: String): Int {
     return result
 }
 
-fun toSimpleString(value: StringBuilder, completedValues: List<String>): String {
+fun andNodeToQuery(value: StringBuilder, completedValues: List<String>, allVariants: List<String>): String {
     val builder = StringBuilder()
     if (completedValues.isNotEmpty()) {
         for (i in 0 until completedValues.size) {
@@ -63,24 +63,29 @@ fun toSimpleString(value: StringBuilder, completedValues: List<String>): String 
             builder.append(completed)
 
             if (i != completedValues.size - 1) {
-                builder.append(" ")
+                builder.append(", ")
             }
         }
     }
 
     if (!value.isEmpty()) {
-        if (completedValues.isNotEmpty()) builder.append(" ")
+        if (completedValues.isNotEmpty()) builder.append(", ")
         builder.append(value.toString())
+    } else {
+        if (completedValues.size != allVariants.size) {
+            //builder.append(", ")
+        }
     }
 
     return builder.toString()
 }
 
-fun toSimpleString(nodes: List<Node>): String {
+fun andNodeToQuery(nodes: List<Node>, currentIndex: Int): String {
     val result = StringBuilder()
     val nonEmpty = mutableListOf<String>()
 
     for (i in 0 until nodes.size) {
+        if (i >= currentIndex + 1) break
         val node = nodes[i]
         val name = node.toQuery()
         if (!name.isEmpty()) nonEmpty.add(name)
@@ -88,8 +93,8 @@ fun toSimpleString(nodes: List<Node>): String {
 
     for (i in 0 until nonEmpty.size) {
         result.append(nonEmpty[i])
-
-        if (i != nonEmpty.size - 1) result.append(" ")
+//
+//        if (i != nonEmpty.size - 1) result.append(" ")
     }
 
     return result.toString()

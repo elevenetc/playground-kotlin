@@ -1,36 +1,37 @@
 package autoquery
 
-import autoquery.nodes.AndNode
+import autoquery.nodes.ColumnsNode
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class AndNodeTests {
+class ColumnsNodeTests {
+
     @Test
     fun test1() {
-        val node = AndNode(listOf("hello", "bye"))
+        val node = ColumnsNode(listOf("hello", "bye"))
         node.append('h')
         node.complete()
         assertEquals("hello", node.toQuery())
         node.append('b')
         node.append('y')
         node.append('e')
-        assertEquals("hello bye", node.toQuery())
+        assertEquals("hello, bye", node.toQuery())
         assertTrue(node.isCompleted())
     }
 
     @Test
     fun testComma() {
-        val node = AndNode(listOf("abc", "cde"))
+        val node = ColumnsNode(listOf("abc", "cde"))
         node.append('a')
         node.append(',')
         node.append('c')
         node.complete()
-        assertEquals("abc cde", node.toQuery())
+        assertEquals("abc, cde", node.toQuery())
     }
 
     @Test
-    fun deleteChars() {
+    fun deleteChars1() {
         val node = fillHelloBye()
         node.delete()
         assertEquals("hello by", node.toQuery())
@@ -52,8 +53,19 @@ class AndNodeTests {
         assertEquals("", node.toQuery())
     }
 
-    fun fillHelloBye(): AndNode {
-        val node = AndNode(listOf("hello", "bye"))
+    @Test
+    fun deleteChars2() {
+        val node = ColumnsNode(listOf("aaa", "bbb"))
+        node.append('a')
+        node.complete()
+        assertEquals("aaa", node.toQuery())
+        node.append(',')
+        assertEquals("aaa, ", node.toQuery())
+    }
+
+
+    private fun fillHelloBye(): ColumnsNode {
+        val node = ColumnsNode(listOf("hello", "bye"))
         node.append('h')
         node.complete()
         node.append('b')

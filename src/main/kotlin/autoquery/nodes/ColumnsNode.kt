@@ -1,10 +1,10 @@
 package autoquery.nodes
 
+import autoquery.andNodeToQuery
 import autoquery.getFullCompletableIndex
 import autoquery.getShortestCompletable
-import autoquery.toSimpleString
 
-class AndNode(private val variants: List<String>) : Node() {
+class ColumnsNode(private val variants: List<String>) : Node() {
 
     private val completedValues = mutableListOf<String>()
 
@@ -62,13 +62,12 @@ class AndNode(private val variants: List<String>) : Node() {
         } else {
             value.setLength(0)
             completedValues.add(shortest)
-            if (completedValues.size == variants.size) setCompleted()
             true
         }
     }
 
     override fun toQuery(): String {
-        return toSimpleString(value, completedValues)
+        return andNodeToQuery(value, completedValues, variants)
     }
 
     override fun isEmpty(): Boolean {

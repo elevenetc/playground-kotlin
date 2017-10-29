@@ -14,7 +14,7 @@ class ExpressionsGroupNodeTests {
 
         node.append('a')
         node.complete()
-        assertEquals("age", node.toQuery())
+        assertEquals("age ", node.toQuery())
         node.append('>')
         node.append('=')
         node.complete()

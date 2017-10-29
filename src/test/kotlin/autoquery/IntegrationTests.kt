@@ -18,30 +18,30 @@ class IntegrationTests {
         query.append('a')
         query.complete()
 
-        assertEquals("select name", query.toQuery())
+        assertEquals("select name ", query.toQuery())
 
         query.append('f')
         query.complete()
 
-        assertEquals("select name from", query.toQuery())
+        assertEquals("select name from ", query.toQuery())
 
         query.append('s')
         query.append('t')
         query.complete()
 
-        assertEquals("select name from students", query.toQuery())
+        assertEquals("select name from students ", query.toQuery())
 
         query.append('w')
         query.complete()
 
-        assertEquals("select name from students where", query.toQuery())
+        assertEquals("select name from students where ", query.toQuery())
 
         query.append('a')
         query.append('g')
         query.append('e')
         query.complete()
 
-        assertEquals("select name from students where age", query.toQuery())
+        assertEquals("select name from students where age ", query.toQuery())
 
         query.append('<')
         query.append('=')
@@ -70,11 +70,15 @@ class IntegrationTests {
         assertEquals(fullQuery, query.toQuery())
 
         val sb = StringBuilder(fullQuery)
+
         while (!sb.isEmpty()) {
             query.deleteChar()
             sb.setLength(sb.length - 1)
 
-            assertEquals(sb.toString(), query.toQuery())
+            val expected = sb.toString()
+            val current = query.toQuery()
+            println(sb.length.toString() + ":" + expected + "<>" + current)
+            assertEquals(expected, current)
         }
     }
 }

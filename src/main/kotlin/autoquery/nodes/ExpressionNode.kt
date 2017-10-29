@@ -78,7 +78,7 @@ class ExpressionNode(
     override fun toQuery(): String {
 
         return if (!operatorNode.isCompleted()) {
-            column.name
+            column.name + " "
         } else {
             val name = column.name
             val operator = operatorNode.toQuery()
