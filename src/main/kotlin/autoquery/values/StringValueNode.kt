@@ -13,12 +13,12 @@ class StringValueNode : Node() {
         }
     }
 
-    override fun append(char: Char): Boolean {
+    override fun addChar(char: Char): Boolean {
         value.append(char)
         return true
     }
 
-    override fun delete(): Boolean {
+    override fun deleteChar(): Boolean {
         if (value.isEmpty()) return false
         value.setLength(value.length - 1)
         return true

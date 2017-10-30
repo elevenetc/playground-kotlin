@@ -13,11 +13,11 @@ class FloatValueNode : Node() {
         }
     }
 
-    override fun delete(): Boolean {
+    override fun deleteChar(): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun append(char: Char): Boolean {
+    override fun addChar(char: Char): Boolean {
         var newValue = value.toString() + char
         return try {
             newValue.toFloat()

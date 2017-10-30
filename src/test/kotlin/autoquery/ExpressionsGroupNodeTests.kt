@@ -12,56 +12,56 @@ class ExpressionsGroupNodeTests {
                 string("name")
         ))
 
-        node.append('a')
+        node.addChar('a')
         node.complete()
         assertEquals("age ", node.toQuery())
-        node.append('>')
-        node.append('=')
+        node.addChar('>')
+        node.addChar('=')
         node.complete()
-        node.append('1')
+        node.addChar('1')
 
         assertEquals("age >= 1", node.toQuery())
 
         node.complete()
 
-        node.append('a')
+        node.addChar('a')
         node.complete()
 
         assertEquals("age >= 1 and ", node.toQuery())
 
-        node.append('n')
-        node.append('a')
-        node.append('m')
-        node.append('e')
+        node.addChar('n')
+        node.addChar('a')
+        node.addChar('m')
+        node.addChar('e')
 
         node.complete()
 
-        node.append('!')
-        node.append('=')
+        node.addChar('!')
+        node.addChar('=')
         node.complete()
 
-        node.append('z')
-        node.append('z')
-        node.append('z')
+        node.addChar('z')
+        node.addChar('z')
+        node.addChar('z')
 
         assertEquals("age >= 1 and name != zzz", node.toQuery())
 
-        node.delete()
+        node.deleteChar()
 
         assertEquals("age >= 1 and name != zz", node.toQuery())
 
-        node.delete()
+        node.deleteChar()
 
         assertEquals("age >= 1 and name != z", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("age >= 1 and name != ", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("age >= 1 and name !=", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("age >= 1 and name !", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("age >= 1 and name ", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("age >= 1 and name", node.toQuery())
     }
 
@@ -71,44 +71,44 @@ class ExpressionsGroupNodeTests {
                 int("age"),
                 string("name")
         ))
-        node.append('a')
+        node.addChar('a')
         node.complete()
-        node.append('=')
+        node.addChar('=')
         node.complete()
-        node.append('1')
-        node.append('0')
+        node.addChar('1')
+        node.addChar('0')
 
         assertEquals("age = 10", node.toQuery())
 
-        node.delete()
+        node.deleteChar()
 
         assertEquals("age = 1", node.toQuery())
 
-        node.delete()
+        node.deleteChar()
 
         assertEquals("age = ", node.toQuery())
 
-        node.delete()
+        node.deleteChar()
 
         assertEquals("age =", node.toQuery())
 
-        node.delete()
+        node.deleteChar()
 
         assertEquals("age ", node.toQuery())
 
-        node.delete()
+        node.deleteChar()
 
         assertEquals("age", node.toQuery())
 
-        node.delete()
+        node.deleteChar()
 
         assertEquals("ag", node.toQuery())
 
-        node.delete()
+        node.deleteChar()
 
         assertEquals("a", node.toQuery())
 
-        node.delete()
+        node.deleteChar()
 
         assertEquals("", node.toQuery())
     }

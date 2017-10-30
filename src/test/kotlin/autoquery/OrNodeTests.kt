@@ -10,7 +10,7 @@ class OrNodeTests {
     @Test
     fun test1() {
         val node = OrNode(listOf("hello", "bye"))
-        node.append('h')
+        node.addChar('h')
         node.complete()
         assertTrue(node.isCompleted())
     }
@@ -18,7 +18,7 @@ class OrNodeTests {
     @Test
     fun test2() {
         val node = OrNode(listOf("hello", "bye"))
-        node.append('x')
+        node.addChar('x')
         node.complete()
         assertFalse(node.isCompleted())
     }
@@ -26,11 +26,11 @@ class OrNodeTests {
     @Test
     fun test3() {
         val node = OrNode(listOf("hello", "bye"))
-        node.append('h')
-        node.append('e')
-        node.append('l')
-        node.append('l')
-        node.append('o')
+        node.addChar('h')
+        node.addChar('e')
+        node.addChar('l')
+        node.addChar('l')
+        node.addChar('o')
         assertFalse(node.isCompleted())
         node.complete()
         assertTrue(node.isCompleted())
@@ -39,15 +39,15 @@ class OrNodeTests {
     @Test
     fun deleteTest() {
         val node = OrNode(listOf("hello", "bye"))
-        node.append('b')
-        node.append('y')
-        node.append('e')
+        node.addChar('b')
+        node.addChar('y')
+        node.addChar('e')
         node.complete()
-        node.delete()
+        node.deleteChar()
         assertEquals("by", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("b", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("", node.toQuery())
     }
 }

@@ -2,7 +2,11 @@ package autoquery.nodes
 
 import autoquery.countCompletable
 
-open class SingleNode(private val target: String) : Node() {
+open class SingleNode(private val target: String, completed: Boolean = false) : Node() {
+
+    init {
+        if (completed) setCompleted(target)
+    }
 
     override fun complete(): Boolean {
         if (isCompleted()) return true
@@ -16,7 +20,7 @@ open class SingleNode(private val target: String) : Node() {
         }
     }
 
-    override fun append(char: Char): Boolean {
+    override fun addChar(char: Char): Boolean {
         if (isCompleted()) return false
         value.append(char)
         return true

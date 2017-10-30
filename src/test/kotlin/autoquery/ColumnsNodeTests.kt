@@ -10,12 +10,12 @@ class ColumnsNodeTests {
     @Test
     fun test1() {
         val node = ColumnsNode(listOf("hello", "bye"))
-        node.append('h')
+        node.addChar('h')
         node.complete()
         assertEquals("hello", node.toQuery())
-        node.append('b')
-        node.append('y')
-        node.append('e')
+        node.addChar(',')
+        node.addChar('b')
+        node.complete()
         assertEquals("hello, bye", node.toQuery())
         assertTrue(node.isCompleted())
     }
@@ -23,9 +23,9 @@ class ColumnsNodeTests {
     @Test
     fun testComma() {
         val node = ColumnsNode(listOf("abc", "cde"))
-        node.append('a')
-        node.append(',')
-        node.append('c')
+        node.addChar('a')
+        node.addChar(',')
+        node.addChar('c')
         node.complete()
         assertEquals("abc, cde", node.toQuery())
     }
@@ -33,42 +33,42 @@ class ColumnsNodeTests {
     @Test
     fun deleteChars1() {
         val node = fillHelloBye()
-        node.delete()
+        node.deleteChar()
         assertEquals("hello by", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("hello b", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("hello", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("hell", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("hel", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("he", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("h", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("", node.toQuery())
     }
 
     @Test
     fun deleteChars2() {
         val node = ColumnsNode(listOf("aaa", "bbb"))
-        node.append('a')
+        node.addChar('a')
         node.complete()
         assertEquals("aaa", node.toQuery())
-        node.append(',')
+        node.addChar(',')
         assertEquals("aaa, ", node.toQuery())
     }
 
 
     private fun fillHelloBye(): ColumnsNode {
         val node = ColumnsNode(listOf("hello", "bye"))
-        node.append('h')
+        node.addChar('h')
         node.complete()
-        node.append('b')
+        node.addChar('b')
         node.complete()
         return node
     }

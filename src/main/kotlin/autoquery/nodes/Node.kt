@@ -16,9 +16,9 @@ abstract class Node {
      * @return false if char was not added because either is already completed
      * or value with this char is invalid
      */
-    abstract fun append(char: Char): Boolean
+    abstract fun addChar(char: Char): Boolean
 
-    open fun delete(): Boolean {
+    open fun deleteChar(): Boolean {
 
         if (value.isEmpty()) {
             onDeletedAll(this)

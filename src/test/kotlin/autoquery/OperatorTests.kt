@@ -10,7 +10,7 @@ class OperatorTests {
     @Test
     fun booleanEqual() {
         val operator = BooleanOperatorNode()
-        operator.append('=')
+        operator.addChar('=')
         assertTrue(operator.complete())
         assertEquals("=", operator.toQuery())
     }
@@ -18,8 +18,8 @@ class OperatorTests {
     @Test
     fun booleanNotEqual() {
         val operator = BooleanOperatorNode()
-        operator.append('!')
-        operator.append('=')
+        operator.addChar('!')
+        operator.addChar('=')
         assertTrue(operator.complete())
         assertEquals("!=", operator.toQuery())
     }
@@ -27,8 +27,8 @@ class OperatorTests {
     @Test
     fun booleanInvalid() {
         val operator = BooleanOperatorNode()
-        operator.append('Z')
-        operator.append('=')
+        operator.addChar('Z')
+        operator.addChar('=')
         assertFalse(operator.complete())
         assertEquals("Z=", operator.toQuery())
     }

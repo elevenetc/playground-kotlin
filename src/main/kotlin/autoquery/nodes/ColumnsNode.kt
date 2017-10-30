@@ -1,76 +1,131 @@
 package autoquery.nodes
 
-import autoquery.andNodeToQuery
-import autoquery.getFullCompletableIndex
 import autoquery.getShortestCompletable
+import java.util.*
 
-class ColumnsNode(private val variants: List<String>) : Node() {
+class ColumnsNode(private val columns: List<String>) : Node() {
 
-    private val completedValues = mutableListOf<String>()
+    private val nodes = LinkedList<Node>()
+
+    init {
+        addSearchColumnNameNode()
+    }
+
+    private fun addSearchColumnNameNode() {
+
+        val cutNodes = mutableListOf<String>()
+
+        for (column in columns) {
+            val added = nodes.any { it.toQuery() == column }
+            if (!added) cutNodes.add(column)
+        }
+
+        nodes.add(SearchColumnNameNode(cutNodes))
+    }
 
     /**
      * Trying to complete [value].
      * If it's completed then new value is added to [completedValues]
      *
-     * @return true when all [variants] are filled in [completedValues]
+     * @return true when all [columns] are filled in [completedValues]
      */
     override fun complete(): Boolean {
         if (isCompleted()) return true
-        return tryToCompleteCurrent()
+
+        if (nodes.last is CommaNode) {
+            //"xxx,"
+            addSearchColumnNameNode()
+            return true
+        } else {
+            if (nodes.last.isCompleted()) {
+                //"xxx"
+                nodes.add(CommaNode())
+                return true
+            } else {
+                //"xxx,a"
+                val completedValues = mutableListOf<String>()
+                val lastValue = nodes.last.toQuery()
+                nodes.filter { it !is CommaNode }.mapTo(completedValues) { it.toQuery() }
+
+                val shortest = getShortestCompletable(lastValue, columns, completedValues)
+                return if (shortest.isEmpty()) {
+                    //"xxx,a"
+                    false
+                } else {
+                    //"xxx,aaa"
+                    nodes.last.setCompleted(shortest)
+                    completeCurrent()
+                    true
+                }
+            }
+        }
     }
 
-    override fun append(char: Char): Boolean {
+    override fun addChar(char: Char): Boolean {
         if (isCompleted()) return false
 
         return if (char == ',') {
-            tryToCompleteCurrent()
-        } else {
-            value.append(char)
 
-            val index = getFullCompletableIndex(value, variants, completedValues)
+            val last = nodes.last()
 
-            if (index > -1) {
-                completedValues.add(value.toString())
-                value.setLength(0)
-                if (completedValues.size == variants.size) setCompleted()
+            return if (last.isCompleted()) {
+                nodes.add(CommaNode())
+                addSearchColumnNameNode()
+                true
+            } else {
+                last.complete()
             }
-            true
+        } else {
+            return nodes.last().addChar(char)
         }
     }
 
-    override fun delete(): Boolean {
-        return if (value.isEmpty() && completedValues.isEmpty()) {
-            onDeletedAll(this)
-            false
-        } else if (value.isEmpty()) {
-            val last = completedValues.removeAt(completedValues.size - 1)
-            value.append(last)
-            this.delete()
-        } else {
-            value.setLength(value.length - 1)
-
-            if (isCompleted()) setNotCompleted()
-
+    override fun deleteChar(): Boolean {
+        setNotCompleted()
+        val last = nodes.last
+        return if (last is CommaNode) {
+            nodes.removeLast()
             true
+        } else {
+
+            if (last.isEmpty()) {
+                if (nodes.size == 1) return false
+                else nodes.removeLast()
+                true
+            } else {
+                last.deleteChar()
+            }
         }
     }
 
-    private fun tryToCompleteCurrent(): Boolean {
-        val shortest = getShortestCompletable(value, variants, completedValues)
-        return if (shortest.isEmpty()) {
-            false
-        } else {
-            value.setLength(0)
-            completedValues.add(shortest)
-            true
+    private fun completeCurrent() {
+
+        val last = nodes.last()
+
+        nodes.removeLast()
+        nodes.add(SingleNode(last.toQuery(), true))
+
+        checkCompleted()
+    }
+
+    private fun checkCompleted() {
+        if (nodes.last.isCompleted() && nodes.size - 1 == columns.size) {
+            setCompleted()
         }
     }
 
     override fun toQuery(): String {
-        return andNodeToQuery(value, completedValues, variants)
+        val sb = StringBuilder()
+        for (node in nodes) {
+            sb.append(node.toQuery())
+        }
+        return sb.toString()
     }
 
     override fun isEmpty(): Boolean {
-        return !value.isEmpty() || !completedValues.isEmpty()
+        return nodes.last.isEmpty()
     }
+
+    inner class SearchColumnNameNode(columnNames: List<String>) : OrNode(columnNames)
+    inner class CommaNode : SingleNode(", ", true)
 }

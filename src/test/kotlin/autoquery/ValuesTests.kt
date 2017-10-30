@@ -11,18 +11,18 @@ class ValuesTests {
     @Test
     fun testFloatInvalid() {
         val node = FloatValueNode()
-        node.append('z')
+        node.addChar('z')
         assertEquals("", node.toQuery())
     }
 
     @Test
     fun testFloatValid() {
         val node = FloatValueNode()
-        node.append('0')
-        node.append('0')
-        node.append('.')
-        node.append('9')
-        node.append('5')
+        node.addChar('0')
+        node.addChar('0')
+        node.addChar('.')
+        node.addChar('9')
+        node.addChar('5')
         assertTrue(node.complete())
         assertEquals("00.95", node.toQuery())
         assertTrue(node.isCompleted())
@@ -31,10 +31,10 @@ class ValuesTests {
     @Test
     fun testBoolean() {
         val node = BooleanValueNode()
-        node.append('t')
-        node.append('r')
-        node.append('u')
-        node.append('e')
+        node.addChar('t')
+        node.addChar('r')
+        node.addChar('u')
+        node.addChar('e')
         assertTrue(node.complete())
         assertEquals("true", node.toQuery())
         assertTrue(node.isCompleted())
@@ -43,9 +43,9 @@ class ValuesTests {
     @Test
     fun stringValueTests() {
         val node = StringValueNode()
-        node.append('x')
-        node.append('y')
-        node.append('z')
+        node.addChar('x')
+        node.addChar('y')
+        node.addChar('z')
         node.complete()
         assertTrue(node.isCompleted())
         assertEquals("xyz", node.toQuery())

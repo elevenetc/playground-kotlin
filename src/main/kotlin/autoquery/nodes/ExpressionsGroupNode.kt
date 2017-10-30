@@ -69,9 +69,9 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Expre
         return selectedColumns.size == columnsVariants.size
     }
 
-    override fun append(char: Char): Boolean {
+    override fun addChar(char: Char): Boolean {
         //if (isCompleted()) return true
-        return nodes.last.append(char)
+        return nodes.last.addChar(char)
     }
 
     override fun complete(): Boolean {
@@ -97,7 +97,7 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Expre
      *
      * So empty node is acceptable because user should have ability to start typing again
      */
-    override fun delete(): Boolean {
+    override fun deleteChar(): Boolean {
         return if (nodes[0].isEmpty()) {
             onDeletedAll(this)
             false
@@ -109,7 +109,7 @@ class ExpressionsGroupNode(private val columnsVariants: List<Column<*>>) : Expre
                 if (nodes.isEmpty()) initGroup()
                 true
             } else {
-                lastNode.delete()
+                lastNode.deleteChar()
             }
         }
     }

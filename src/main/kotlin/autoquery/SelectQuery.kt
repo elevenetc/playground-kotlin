@@ -32,7 +32,7 @@ class SelectQuery(private vararg val tables: Table) : Query {
 
     override fun append(char: Char) {
         val node = nodes[currentIndex]
-        node.append(char)
+        node.addChar(char)
         //if (node.isCompleted()) {
         //    moveToNext()
         //}
@@ -50,7 +50,7 @@ class SelectQuery(private vararg val tables: Table) : Query {
     }
 
     override fun toQuery(): String {
-        return andNodeToQuery(nodes, currentIndex)
+        return selectToQuery(nodes, currentIndex)
     }
 
     private fun getColumns(): List<Column<*>> {
@@ -83,7 +83,7 @@ class SelectQuery(private vararg val tables: Table) : Query {
             currentIndex--
             deleteChar()
         } else {
-            nodes[currentIndex].delete()
+            nodes[currentIndex].deleteChar()
         }
     }
 

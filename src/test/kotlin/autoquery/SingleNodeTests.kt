@@ -12,13 +12,13 @@ class SingleNodeTests {
         node.complete()
         assertFalse(node.isCompleted())
 
-        node.append('h')
-        node.append('e')
-        node.append('l')
-        node.append('l')
-        node.append('o')
+        node.addChar('h')
+        node.addChar('e')
+        node.addChar('l')
+        node.addChar('l')
+        node.addChar('o')
         assertFalse(node.isCompleted())
-        node.append('z')
+        node.addChar('z')
         assertFalse(node.isCompleted())
     }
 
@@ -26,17 +26,17 @@ class SingleNodeTests {
     fun testDelete() {
         val node = SingleNode("hello")
         node.setCompleted("hello")
-        node.delete()
+        node.deleteChar()
         assertEquals("hell", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("hel", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("he", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("h", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("", node.toQuery())
-        node.delete()
+        node.deleteChar()
         assertEquals("", node.toQuery())
     }
 }

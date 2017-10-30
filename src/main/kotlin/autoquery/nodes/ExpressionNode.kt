@@ -14,19 +14,19 @@ class ExpressionNode(
     override fun isEmpty(): Boolean {
         /**
          * Never empty. As column is defined always.
-         * If delete called on column it's replaced with [ColumnNameNode]
+         * If deleteChar called on column it's replaced with [ColumnNameNode]
          */
         return false
     }
 
-    override fun delete(): Boolean {
+    override fun deleteChar(): Boolean {
 
         return if (cursor == 2) {
             if (valueNode.isEmpty()) {
                 cursor = 1
                 return true
             }
-            valueNode.delete()
+            valueNode.deleteChar()
             true
         } else {//1
 
@@ -35,7 +35,7 @@ class ExpressionNode(
                 group.removeLast(removedColumn)
                 true
             } else {
-                operatorNode.delete()
+                operatorNode.deleteChar()
                 true
             }
         }
@@ -47,15 +47,15 @@ class ExpressionNode(
         }
     }
 
-    override fun append(char: Char): Boolean {
+    override fun addChar(char: Char): Boolean {
         if (isCompleted()) return false
 
         return if (cursor == 1) {
-            operatorNode.append(char)
+            operatorNode.addChar(char)
             if (operatorNode.isCompleted()) cursor = 2
             true
         } else {
-            valueNode.append(char)
+            valueNode.addChar(char)
             true
         }
     }

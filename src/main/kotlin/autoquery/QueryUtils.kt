@@ -73,14 +73,14 @@ fun andNodeToQuery(value: StringBuilder, completedValues: List<String>, allVaria
         builder.append(value.toString())
     } else {
         if (completedValues.size != allVariants.size) {
-            //builder.append(", ")
+            //builder.addChar(", ")
         }
     }
 
     return builder.toString()
 }
 
-fun andNodeToQuery(nodes: List<Node>, currentIndex: Int): String {
+fun selectToQuery(nodes: List<Node>, currentIndex: Int): String {
     val result = StringBuilder()
     val nonEmpty = mutableListOf<String>()
 
@@ -94,7 +94,7 @@ fun andNodeToQuery(nodes: List<Node>, currentIndex: Int): String {
     for (i in 0 until nonEmpty.size) {
         result.append(nonEmpty[i])
 //
-//        if (i != nonEmpty.size - 1) result.append(" ")
+//        if (i != nonEmpty.size - 1) result.addChar(" ")
     }
 
     return result.toString()

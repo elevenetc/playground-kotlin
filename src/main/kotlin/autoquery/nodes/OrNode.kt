@@ -19,13 +19,13 @@ open class OrNode(private val variants: List<String>) : Node() {
         }
     }
 
-    override fun append(char: Char): Boolean {
+    override fun addChar(char: Char): Boolean {
         if (isCompleted()) return false
         value.append(char)
         return true
     }
 
-    override fun delete(): Boolean {
+    override fun deleteChar(): Boolean {
         return if (!value.isEmpty()) {
             value.setLength(value.length - 1)
             true
