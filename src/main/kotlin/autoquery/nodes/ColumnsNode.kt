@@ -11,7 +11,7 @@ class ColumnsNode(private val columns: List<String>) : Node() {
         addSearchColumnNameNode()
     }
 
-    private fun addSearchColumnNameNode() {
+    private fun addSearchColumnNameNode(value: String = "") {
 
         val cutNodes = mutableListOf<String>()
 
@@ -21,6 +21,10 @@ class ColumnsNode(private val columns: List<String>) : Node() {
         }
 
         nodes.add(SearchColumnNameNode(cutNodes))
+
+        if (!value.isEmpty()) {
+            nodes.last.value.append(value)
+        }
     }
 
     /**
@@ -83,17 +87,28 @@ class ColumnsNode(private val columns: List<String>) : Node() {
     override fun deleteChar(): Boolean {
         setNotCompleted()
         val last = nodes.last
-        return if (last is CommaNode) {
+        if (last is CommaNode) {
             nodes.removeLast()
-            true
-        } else {
+            return true
+        } else if (last is SingleNode) {
 
-            if (last.isEmpty()) {
-                if (nodes.size == 1) return false
-                else nodes.removeLast()
-                true
+            last.deleteChar()
+            val lastColumn = last.toQuery()
+            nodes.removeLast()
+            addSearchColumnNameNode(lastColumn)
+
+            return true
+        } else {
+            //is SearchColumnNameNode
+            if (!last.isEmpty()) {
+                return last.deleteChar()
             } else {
-                last.deleteChar()
+                if (nodes.size == 1) {
+                    return false
+                } else {
+                    nodes.removeLast()
+                    return true
+                }
             }
         }
     }

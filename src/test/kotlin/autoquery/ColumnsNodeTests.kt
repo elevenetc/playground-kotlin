@@ -21,22 +21,17 @@ class ColumnsNodeTests {
     }
 
     @Test
-    fun testComma() {
-        val node = ColumnsNode(listOf("abc", "cde"))
-        node.addChar('a')
-        node.addChar(',')
-        node.addChar('c')
-        node.complete()
-        assertEquals("abc, cde", node.toQuery())
-    }
-
-    @Test
     fun deleteChars1() {
         val node = fillHelloBye()
+        assertEquals("hello, bye", node.toQuery())
         node.deleteChar()
-        assertEquals("hello by", node.toQuery())
+        assertEquals("hello, by", node.toQuery())
         node.deleteChar()
-        assertEquals("hello b", node.toQuery())
+        assertEquals("hello, b", node.toQuery())
+        node.deleteChar()
+        assertEquals("hello, ", node.toQuery())
+        node.deleteChar()
+        assertEquals("hello, ", node.toQuery())
         node.deleteChar()
         assertEquals("hello", node.toQuery())
         node.deleteChar()
@@ -47,8 +42,6 @@ class ColumnsNodeTests {
         assertEquals("he", node.toQuery())
         node.deleteChar()
         assertEquals("h", node.toQuery())
-        node.deleteChar()
-        assertEquals("", node.toQuery())
         node.deleteChar()
         assertEquals("", node.toQuery())
     }
@@ -67,6 +60,8 @@ class ColumnsNodeTests {
     private fun fillHelloBye(): ColumnsNode {
         val node = ColumnsNode(listOf("hello", "bye"))
         node.addChar('h')
+        node.complete()
+        node.addChar(',')
         node.complete()
         node.addChar('b')
         node.complete()
