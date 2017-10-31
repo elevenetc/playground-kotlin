@@ -11,6 +11,10 @@ class ColumnsNode(private val columns: List<String>) : Node() {
         addSearchColumnNameNode()
     }
 
+    fun isValid(): Boolean {
+        return nodes.last is SingleNode
+    }
+
     private fun addSearchColumnNameNode(value: String = "") {
 
         val cutNodes = mutableListOf<String>()
@@ -42,9 +46,8 @@ class ColumnsNode(private val columns: List<String>) : Node() {
             return true
         } else {
             if (nodes.last.isCompleted()) {
-                //"xxx"
-                nodes.add(CommaNode())
-                return true
+                //"xxx" - already completed
+                return false
             } else {
                 //"xxx,a"
                 val completedValues = mutableListOf<String>()
@@ -129,6 +132,10 @@ class ColumnsNode(private val columns: List<String>) : Node() {
         }
     }
 
+    fun localIsCompleted(): Boolean {
+        return nodes.last.isCompleted() && nodes.size - 1 == columns.size
+    }
+
     override fun toQuery(): String {
         val sb = StringBuilder()
         for (node in nodes) {
@@ -138,7 +145,7 @@ class ColumnsNode(private val columns: List<String>) : Node() {
     }
 
     override fun isEmpty(): Boolean {
-        return nodes.last.isEmpty()
+        return nodes.size == 1 && nodes.last.isEmpty()
     }
 
     inner class SearchColumnNameNode(columnNames: List<String>) : OrNode(columnNames)

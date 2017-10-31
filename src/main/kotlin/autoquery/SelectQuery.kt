@@ -6,12 +6,9 @@ import java.util.*
 
 class SelectQuery(private vararg val tables: Table) : Query {
 
-    override fun currentIndex(): Int {
-        return currentIndex
-    }
-
     private val nodes: MutableList<Node> = LinkedList()
-    private var currentIndex: Int = 0
+    private var cursor: Int = 0
+    private var lastAction = Action.EMPTY
 
     init {
         val columnsNames = getColumnsNames()
@@ -30,27 +27,58 @@ class SelectQuery(private vararg val tables: Table) : Query {
         nodes.add(ExpressionsGroupNode(columns))
     }
 
-    override fun append(char: Char) {
-        val node = nodes[currentIndex]
+    override fun cursorPosition(): Int {
+        return cursor
+    }
+
+
+    override fun addChar(char: Char) {
+
+        lastAction = Action.APPEND_CHAR
+
+        val node = nodes[cursor]
         node.addChar(char)
+
+
         //if (node.isCompleted()) {
         //    moveToNext()
         //}
     }
 
-    override fun complete() {
-        val node = nodes[currentIndex]
-        if (node.complete()) {
-            moveToNext()
+    override fun complete(): Boolean {
+        var result = false
+        val node = nodes[cursor]
+
+        if (node is ColumnsNode) {
+
+            result = if (lastAction == Action.COMPLETE) {
+                if (node.isValid()) {
+                    moveToNext()
+                    true
+                } else {
+                    node.complete()
+                }
+            } else {
+                node.complete()
+            }
+
+        } else {
+            if (node.complete()) {
+                moveToNext()
+                result = true
+            }
         }
+
+        lastAction = Action.COMPLETE
+        return result
     }
 
-    override fun getCurrent(): List<Node> {
+    override fun getNodes(): List<Node> {
         return nodes
     }
 
     override fun toQuery(): String {
-        return selectToQuery(nodes, currentIndex)
+        return selectToQuery(nodes, cursor)
     }
 
     private fun getColumns(): List<Column<*>> {
@@ -72,28 +100,35 @@ class SelectQuery(private vararg val tables: Table) : Query {
 
     override fun deleteChar(): Boolean {
 
-        if (nodes[currentIndex] is FixedSpaceNode) {
-            currentIndex--
+        lastAction = Action.DELETE_CHAR
+
+        val node = nodes[cursor]
+
+        if (node is FixedSpaceNode) {
+            cursor--
             return true
         }
 
-        return if (currentIndex == 0 && nodes[0].isEmpty()) {
+        return if (cursor == 0 && nodes[0].isEmpty()) {
             false
-        } else if (nodes[currentIndex].isEmpty()) {
-            currentIndex--
+        } else if (node.isEmpty()) {
+            cursor--
             deleteChar()
         } else {
-            nodes[currentIndex].deleteChar()
+            node.deleteChar()
         }
     }
 
     private fun moveToNext() {
-        if (currentIndex < nodes.size - 1) {
-            currentIndex++
+        if (cursor < nodes.size - 1) {
+            cursor++
 
-            if (nodes[currentIndex] is FixedSpaceNode) moveToNext()
+            if (nodes[cursor] is FixedSpaceNode) moveToNext()
         }
     }
 
+    enum class Action {
+        EMPTY, APPEND_CHAR, DELETE_CHAR, COMPLETE
+    }
 
 }

@@ -3,10 +3,10 @@ package autoquery
 import autoquery.nodes.Node
 
 interface Query {
-    fun append(char: Char)
-    fun complete()
-    fun getCurrent(): List<Node>
-    fun currentIndex(): Int
-    fun toQuery(): String
+    fun addChar(char: Char)
     fun deleteChar(): Boolean
+    fun complete(): Boolean
+    fun getNodes(): List<Node>
+    fun cursorPosition(): Int
+    fun toQuery(): String
 }
