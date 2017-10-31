@@ -2,9 +2,6 @@ package autoquery
 
 import autoquery.nodes.Node
 
-fun getFullCompletableIndex(value: StringBuilder, variants: List<String>, ignore: List<String> = emptyList()): Int {
-    return getFullCompletableIndex(value.toString(), variants)
-}
 
 fun getFullCompletableIndex(value: String, variants: List<String>, ignore: List<String> = emptyList()): Int {
     for (i in 0 until variants.size) {
@@ -53,31 +50,6 @@ fun countCompletable(target: String, value: String): Int {
         }
     }
     return result
-}
-
-fun andNodeToQuery(value: StringBuilder, completedValues: List<String>, allVariants: List<String>): String {
-    val builder = StringBuilder()
-    if (completedValues.isNotEmpty()) {
-        for (i in 0 until completedValues.size) {
-            val completed = completedValues[i]
-            builder.append(completed)
-
-            if (i != completedValues.size - 1) {
-                builder.append(", ")
-            }
-        }
-    }
-
-    if (!value.isEmpty()) {
-        if (completedValues.isNotEmpty()) builder.append(", ")
-        builder.append(value.toString())
-    } else {
-        if (completedValues.size != allVariants.size) {
-            //builder.addChar(", ")
-        }
-    }
-
-    return builder.toString()
 }
 
 fun selectToQuery(nodes: List<Node>, currentIndex: Int): String {

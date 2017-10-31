@@ -18,7 +18,7 @@ class FloatValueNode : Node() {
     }
 
     override fun addChar(char: Char): Boolean {
-        var newValue = value.toString() + char
+        val newValue = value.toString() + char
         return try {
             newValue.toFloat()
             value.append(char)

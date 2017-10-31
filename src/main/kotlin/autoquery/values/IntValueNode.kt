@@ -15,7 +15,7 @@ class IntValueNode : Node() {
     }
 
     override fun addChar(char: Char): Boolean {
-        var newValue = value.toString() + char
+        val newValue = value.toString() + char
         return try {
             newValue.toInt()
             value.append(char)

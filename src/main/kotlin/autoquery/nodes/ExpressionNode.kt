@@ -14,7 +14,7 @@ class ExpressionNode(
     override fun isEmpty(): Boolean {
         /**
          * Never empty. As column is defined always.
-         * If deleteChar called on column it's replaced with [ColumnNameNode]
+         * If deleteChar called on column it's replaced with dynamic search node.
          */
         return false
     }

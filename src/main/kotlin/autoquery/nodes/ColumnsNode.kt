@@ -31,12 +31,6 @@ class ColumnsNode(private val columns: List<String>) : Node() {
         }
     }
 
-    /**
-     * Trying to complete [value].
-     * If it's completed then new value is added to [completedValues]
-     *
-     * @return true when all [columns] are filled in [completedValues]
-     */
     override fun complete(): Boolean {
         if (isCompleted()) return true
 
@@ -130,10 +124,6 @@ class ColumnsNode(private val columns: List<String>) : Node() {
         if (nodes.last.isCompleted() && nodes.size - 1 == columns.size) {
             setCompleted()
         }
-    }
-
-    fun localIsCompleted(): Boolean {
-        return nodes.last.isCompleted() && nodes.size - 1 == columns.size
     }
 
     override fun toQuery(): String {
