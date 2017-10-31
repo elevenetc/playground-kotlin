@@ -72,7 +72,7 @@ class IntegrationTests {
         val fullQuery = "select name from students where age <= 18 or name = bob"
         assertEquals(fullQuery, query.toQuery())
 
-        deleteAll(fullQuery, query)
+        deleteCharAndVerify(fullQuery, query)
     }
 
     @Test
@@ -155,14 +155,47 @@ class IntegrationTests {
         val fullQuery = "select name, age from students where age <= 18 or name = bob"
         assertEquals(fullQuery, query.toQuery())
 
-        deleteAll(fullQuery, query)
+        deleteCharAndVerify(fullQuery, query, 47)
+
+        assertEquals("select name, ", query.toQuery())
+        query.deleteChar()
+        assertEquals("select name, ", query.toQuery())
+        query.deleteChar()
+        assertEquals("select name", query.toQuery())
+        query.deleteChar()
+        assertEquals("select nam", query.toQuery())
+        query.deleteChar()
+        assertEquals("select na", query.toQuery())
+        query.deleteChar()
+        assertEquals("select n", query.toQuery())
+        query.deleteChar()
+        assertEquals("select ", query.toQuery())
+        query.deleteChar()
+        assertEquals("select", query.toQuery())
+        query.deleteChar()
+        assertEquals("selec", query.toQuery())
+        query.deleteChar()
+        assertEquals("sele", query.toQuery())
+        query.deleteChar()
+        assertEquals("sel", query.toQuery())
+        query.deleteChar()
+        assertEquals("se", query.toQuery())
+        query.deleteChar()
+        assertEquals("s", query.toQuery())
+        query.deleteChar()
+        assertEquals("", query.toQuery())
+
     }
 
 
-    private fun deleteAll(fullQuery: String, query: Query) {
+    private fun deleteCharAndVerify(fullQuery: String, query: Query, limit: Int = -1): String {
         val sb = StringBuilder(fullQuery)
+        var counter = 0
 
         while (!sb.isEmpty()) {
+
+            if (counter == limit) break
+
             query.deleteChar()
             sb.setLength(sb.length - 1)
 
@@ -170,6 +203,8 @@ class IntegrationTests {
             val current = query.toQuery()
             println(sb.length.toString() + "expected:'" + expected + "' <> actual:'" + current + "'")
             assertEquals(expected, current)
+            counter++
         }
+        return sb.toString()
     }
 }
