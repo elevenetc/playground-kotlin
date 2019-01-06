@@ -1,6 +1,6 @@
 buildscript {
 
-    ext.kotlin_version = '1.1.51'
+    ext.kotlin_version = '1.2.71'
     ext.rx_java_version = '2.1.2'
     ext.slf4j_version = '1.7.5'
     ext.log4j_version = '1.2.17'
@@ -25,9 +25,16 @@ sourceSets {
 
 repositories {
     mavenCentral()
+
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
+
+    implementation files('libs/jline-3.9.1-SNAPSHOT.jar')
+    
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "io.reactivex.rxjava2:rxjava:$rx_java_version"
 
@@ -35,10 +42,19 @@ dependencies {
     compile "org.slf4j:slf4j-api:$slf4j_version"
     compile "org.slf4j:slf4j-log4j12:$slf4j_version"
 
+//    compile 'org.jline:jline:3.9.0'
+//    compile 'net.java.dev.jna:jna:5.0.0'
+    //compile 'net.java.dev.jna:jna-platform:5.0.0'
+    //compile 'org.fusesource.jansi:jansi:1.17.1'
+//    compile 'info.picocli:picocli:3.7.0'
+
     //tests
     testCompile 'junit:junit:4.11'
     testCompile "org.mockito:mockito-core:$mockito_version"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompile "org.assertj:assertj-core:3.11.1"
+
+    implementation "io.reactivex.rxjava2:rxjava:2.1.10"
 }
 
 test.testClassesDir = project.tasks.compileTestKotlin.destinationDir
