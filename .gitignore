@@ -5,3 +5,6 @@
 .idea
 /out
 /src/main/kotlin/Main.kt
+/build
+.gradle
+.DS_Store
