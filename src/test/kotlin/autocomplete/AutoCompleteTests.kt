@@ -2,6 +2,7 @@ package test.autocomplete
 
 import autocomplete.AnyNode
 import autocomplete.AutoCompleter
+import autocomplete.Node
 import autocomplete.StringNode
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -13,7 +14,7 @@ class AutoCompleteTests {
         val completer = AutoCompleter()
 
         val root = StringNode("aaa")
-        root.children.add(StringNode("bbb"))
+        root.children().add(StringNode("bbb"))
 
         completer.setRoot(root)
 
@@ -32,7 +33,7 @@ class AutoCompleteTests {
         val completer = AutoCompleter()
 
         val root = StringNode("aaa")
-        root.children.add(StringNode("bbb"))
+        root.children().add(StringNode("bbb"))
 
         completer.setRoot(root)
 
@@ -48,7 +49,7 @@ class AutoCompleteTests {
     fun testAny() {
         val completer = AutoCompleter()
         val root = StringNode("aaa")
-        root.children.add(AnyNode())
+        root.children().add(AnyNode())
         completer.setRoot(root)
 
         completer.append('a')
@@ -68,19 +69,93 @@ class AutoCompleteTests {
         val select = listOf(StringNode("select"))
         val tables = listOf(StringNode("users"), StringNode("apts"))
         val where = listOf(StringNode("where"))
-        val fields = listOf(
-                StringNode("name").add(AnyNode()),
-                StringNode("id").add(AnyNode())
+        val fields = mutableListOf<Node>()
+        val futureFields = { fields }
+
+        val limit = StringNode("limit").add(AnyNode())
+
+        val andOr = listOf(
+                StringNode("and").addNext(futureFields),
+                StringNode("or").addNext(futureFields),
+                limit
         )
-        val andOr = listOf(StringNode("and"), StringNode("or"))
+
+        val userEntry = AnyNode().add(
+                andOr
+        )
+
+        fields.add(StringNode("name").add(userEntry))
+        fields.add(StringNode("id").add(userEntry))
+
+
 
         completer.set(
                 select,
                 tables,
                 where,
-                fields,
-                andOr
+                fields
         )
+
+        println("      |")
+        completer.append('s')
+        completer.complete()
+
+        completer.append('u')
+        completer.complete()
+
+        echoNodes(completer)
+
+        completer.append('w')
+        completer.complete()
+
+        echoNodes(completer)
+
+        completer.append('n')
+        completer.append('a')
+        completer.complete()
+
+        echoNodes(completer)
+
+        completer.append('b')
+        completer.append('o')
+        completer.append('b')
+        completer.complete()
+
+        echoNodes(completer)
+
+        completer.append('a')
+        completer.complete()
+
+        echoNodes(completer)
+
+        completer.append('i')
+        completer.complete()
+
+        completer.append('1')
+        completer.append('3')
+        completer.complete()
+
+        echoNodes(completer)
+
+        completer.append('l')
+        completer.complete()
+
+        completer.append('3')
+        completer.append('3')
+        completer.complete()
+
+        echoNodes(completer)
+
+        println("      |")
+
+    }
+
+    private fun echoNext(auto: AutoCompleter) {
+        println(" next | " + auto.next())
+    }
+
+    private fun echoNodes(auto: AutoCompleter) {
+        println("nodes | " + auto.nodes())
     }
 
     fun stringValue(completer: AutoCompleter): String {

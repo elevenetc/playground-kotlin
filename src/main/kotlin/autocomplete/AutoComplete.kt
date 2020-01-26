@@ -13,25 +13,33 @@ class AutoCompleter {
         tree.nodes.addAll(root)
     }
 
+    fun next(): List<Node> {
+        return if (currentNodes.isEmpty()) emptyList()
+        else currentNodes.first.children()
+    }
+
     fun set(root: List<Node>,
             next1: List<Node>,
             next2: List<Node> = emptyList(),
             next3: List<Node> = emptyList(),
             next4: List<Node> = emptyList()) {
+
+        setRoot(root.first())
+
         root.forEach {
-            it.children.addAll(next1)
+            it.children().addAll(next1)
         }
 
         next1.forEach {
-            it.children.addAll(next2)
+            it.children().addAll(next2)
         }
 
         next2.forEach {
-            it.children.addAll(next3)
+            it.children().addAll(next3)
         }
 
         next3.forEach {
-            it.children.addAll(next4)
+            it.children().addAll(next4)
         }
     }
 
@@ -74,7 +82,7 @@ class AutoCompleter {
 
             val last = currentNodes.last
 
-            val result = last.children.firstOrNull {
+            val result = last.children().firstOrNull {
 
                 var r = false
 
@@ -95,14 +103,12 @@ class AutoCompleter {
 
             if (result is AnyNode) {
                 val anyNode = AnyNode(chars.toString())
-                anyNode.children.addAll(result.children)
+                anyNode.children().addAll(result.children())
                 anyNode
             } else {
                 result
             }
         }
-
-        println("returning: $n")
 
         return if (n == null) {
             false
@@ -120,7 +126,29 @@ class AutoCompleteTree {
 
 abstract open class Node {
 
-    val children = mutableListOf<Node>()
+    private val children = mutableListOf<Node>()
+    private var future: () -> MutableList<Node> = { mutableListOf() }
+
+    fun children(): MutableList<Node> {
+        val f = future()
+        return if (f.isEmpty()) {
+            children
+        } else {
+            f
+        }
+    }
+
+    fun addNext(future: () -> MutableList<Node>): Node {
+        this.future = future
+        return this
+    }
+
+    fun addNext(nodes: List<Node>): Node {
+        nodes.forEach {
+            children.add(it)
+        }
+        return this
+    }
 
     fun add(nodes: List<Node>): Node {
         children.addAll(nodes)
