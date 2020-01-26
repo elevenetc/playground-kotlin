@@ -15,7 +15,7 @@ class AutoCompleter {
 
     fun next(): List<Node> {
         return if (currentNodes.isEmpty()) emptyList()
-        else currentNodes.first.children()
+        else currentNodes.last.children()
     }
 
     fun set(root: List<Node>,
@@ -47,8 +47,28 @@ class AutoCompleter {
         chars.append(ch)
     }
 
+    fun delete(): Boolean {
+        return if (chars.isEmpty()) {
+            return if (currentNodes.isEmpty()) {
+                false
+            } else {
+                val last = currentNodes.removeLast()
+                val value = last.value()
+                chars.append(value)
+                delete()
+            }
+        } else {
+            chars.deleteCharAt(chars.length - 1)
+            true
+        }
+    }
+
     fun nodes(): List<Node> {
         return currentNodes
+    }
+
+    fun postfix(): String {
+        return chars.toString()
     }
 
     fun complete(): Boolean {
@@ -124,7 +144,7 @@ class AutoCompleteTree {
     val nodes: MutableList<Node> = mutableListOf()
 }
 
-abstract open class Node {
+abstract class Node {
 
     private val children = mutableListOf<Node>()
     private var future: () -> MutableList<Node> = { mutableListOf() }

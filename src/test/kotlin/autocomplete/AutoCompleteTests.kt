@@ -145,9 +145,64 @@ class AutoCompleteTests {
         completer.complete()
 
         echoNodes(completer)
+        echoNext(completer)
 
         println("      |")
 
+        assertThat("[select][users][where][name][bob][and][id][13][limit][33]").isEqualTo(stringValue(completer))
+
+    }
+
+    @Test
+    fun testDeleteSingle() {
+        val completer = AutoCompleter()
+        val node = StringNode("zed")
+        completer.setRoot(node)
+
+        completer.append('z')
+        completer.complete()
+
+        assertThat("[zed]").isEqualTo(stringValue(completer))
+
+        completer.delete()
+        assertThat("").isEqualTo(stringValue(completer))
+        assertThat("ze").isEqualTo(completer.postfix())
+        completer.delete()
+        assertThat("z").isEqualTo(completer.postfix())
+
+        completer.complete()
+
+        assertThat("[zed]").isEqualTo(stringValue(completer))
+    }
+
+    @Test
+    fun testDeleteTwo() {
+        val completer = AutoCompleter()
+        val node = StringNode("one").add(StringNode("two"))
+        completer.setRoot(node)
+
+        completer.append('o')
+        completer.complete()
+
+        assertThat("[one]").isEqualTo(stringValue(completer))
+
+        completer.append('t')
+
+        completer.complete()
+
+        assertThat("[one][two]").isEqualTo(stringValue(completer))
+
+        completer.delete()
+
+        assertThat("[one]").isEqualTo(stringValue(completer))
+        assertThat("tw").isEqualTo(completer.postfix())
+        completer.delete()
+        completer.delete()
+        assertThat("").isEqualTo(completer.postfix())
+        assertThat("[one]").isEqualTo(stringValue(completer))
+        completer.delete()
+        assertThat("").isEqualTo(stringValue(completer))
+        assertThat("on").isEqualTo(completer.postfix())
     }
 
     private fun echoNext(auto: AutoCompleter) {
